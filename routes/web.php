@@ -59,6 +59,12 @@ Route::middleware('auth')->group(function () {
         // Pieces & Toggle Active
         Route::match(['patch', 'post'], 'pieces/{piece}/toggle-active', [\App\Http\Controllers\Admin\PieceController::class, 'toggleActive'])->name('pieces.toggle-active');
         Route::resource('pieces', \App\Http\Controllers\Admin\PieceController::class);
+
+        // Import & Export Catalogue
+        Route::get('imports/template', [\App\Http\Controllers\Admin\ImportExportController::class, 'downloadTemplate'])->name('imports.template');
+        Route::get('imports/{import}/errors-csv', [\App\Http\Controllers\Admin\ImportExportController::class, 'downloadErrors'])->name('imports.errors-csv');
+        Route::get('export', [\App\Http\Controllers\Admin\ImportExportController::class, 'export'])->name('export');
+        Route::resource('imports', \App\Http\Controllers\Admin\ImportExportController::class)->only(['index', 'create', 'store', 'show']);
     });
 });
 
