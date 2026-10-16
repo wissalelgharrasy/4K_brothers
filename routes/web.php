@@ -46,6 +46,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Admin Panel
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+        // CRUDs
+        Route::resource('marques', \App\Http\Controllers\Admin\MarqueController::class);
+        Route::resource('vehicules', \App\Http\Controllers\Admin\VehiculeController::class);
+        Route::resource('familles', \App\Http\Controllers\Admin\FamilleController::class);
+
+        // Pieces & Toggle Active
+        Route::match(['patch', 'post'], 'pieces/{piece}/toggle-active', [\App\Http\Controllers\Admin\PieceController::class, 'toggleActive'])->name('pieces.toggle-active');
+        Route::resource('pieces', \App\Http\Controllers\Admin\PieceController::class);
+    });
 });
 
 require __DIR__.'/auth.php';
