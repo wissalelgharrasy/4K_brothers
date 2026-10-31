@@ -90,27 +90,24 @@
             </div>
         </div>
 
-        <!-- Dernier Import -->
+        <!-- Catalogue PDF -->
         <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Dernier Import Excel</span>
-                <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Catalogue PDF</span>
+                <span class="p-2 rounded-lg bg-brand-red/10 text-brand-red">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
                 </span>
             </div>
-            @if ($dernierImport)
-                <div class="text-base font-black text-slate-900 truncate" title="{{ $dernierImport->fichier }}">
-                    {{ $dernierImport->fichier }}
-                </div>
-                <div class="mt-2 text-xs text-slate-500">
-                    {{ $dernierImport->date_import->format('d/m/Y H:i') }} &bull; {{ $dernierImport->nb_lignes }} lignes
-                </div>
-            @else
-                <div class="text-base font-bold text-slate-400">Aucun import</div>
-                <div class="mt-2 text-xs text-slate-400">Catalogue initial en base</div>
-            @endif
+            <div class="text-base font-black text-slate-900">
+                Sur Mesure & Filtres
+            </div>
+            <div class="mt-2 text-xs">
+                <a href="{{ route('admin.catalogue.builder') }}" class="text-brand-red font-bold hover:underline">
+                    Composer un catalogue &rarr;
+                </a>
+            </div>
         </div>
 
     </div>
@@ -126,7 +123,14 @@
                 Ajouter une Pièce
             </a>
 
-            <a href="{{ route('admin.marques.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors">
+            <a href="{{ route('admin.catalogue.builder') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors">
+                <svg class="w-4 h-4 mr-2 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                </svg>
+                Créateur Catalogue PDF
+            </a>
+
+            <a href="{{ route('admin.marques.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>

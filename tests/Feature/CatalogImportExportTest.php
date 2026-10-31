@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Models\Vehicule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CatalogImportExportTest extends TestCase
@@ -18,11 +17,17 @@ class CatalogImportExportTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Marque $dacia;
+
     private Marque $renault;
+
     private Vehicule $duster;
+
     private Vehicule $clio4;
+
     private Famille $optiques;
+
     private Famille $pareChocs;
 
     protected function setUp(): void
@@ -135,8 +140,8 @@ class CatalogImportExportTest extends TestCase
         // Still only 1 record, but updated price and availability
         $this->assertEquals(1, Piece::where('designation', 'OPTIQUE AV CHROME DUSTER')->count());
         $piece = Piece::where('designation', 'OPTIQUE AV CHROME DUSTER')->first();
-        $this->assertEquals(680.00, (float)$piece->prix_ttc);
-        $this->assertTrue((bool)$piece->dispo_gauche);
+        $this->assertEquals(680.00, (float) $piece->prix_ttc);
+        $this->assertTrue((bool) $piece->dispo_gauche);
 
         $this->assertDatabaseHas('import_catalogues', [
             'nb_crees' => 0,
@@ -212,7 +217,7 @@ class CatalogImportExportTest extends TestCase
                     'designation' => 'Pièce Rejetée',
                     'motif' => 'Prix TTC manquant',
                     'donnees' => ['Désignation' => 'Pièce Rejetée'],
-                ]
+                ],
             ],
             'statut' => 'partiel',
         ]);
@@ -261,5 +266,30 @@ class CatalogImportExportTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertStringContainsString('catalogue_4k_brothers', $response->headers->get('content-disposition'));
+    }
+
+    public function test_admin_can_export_catalogue_as_pdf(): void
+    {
+        Piece::create([
+            'designation' => 'OPTIQUE CITROEN BERLINGO 08-',
+            'famille_id' => $this->optiques->id,
+            'vehicule_id' => $this->clio4->id,
+            'position' => 'RL',
+            'annee_debut' => 2008,
+            'prix_ttc' => 753.00,
+            'dispo_droite' => true,
+            'dispo_gauche' => true,
+            'actif' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('admin.export.pdf'));
+
+        $response->assertStatus(200);
+        $response->assertSee('IMAGES');
+        $response->assertSee('DESIGNATION');
+        $response->assertSee('DISP');
+        $response->assertSee('PRIX');
+        $response->assertSee('OPTIQUE CITROEN BERLINGO 08-');
+        $response->assertSee('753,00');
     }
 }

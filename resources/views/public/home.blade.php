@@ -75,11 +75,15 @@
                     <!-- Decorative corner accent -->
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-slate-50 group-hover:bg-brand-red/10 rounded-full transition-colors"></div>
 
-                    <!-- Brand Icon Placeholder / Logo -->
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-100 group-hover:bg-brand-red/5 border border-slate-200 flex items-center justify-center mb-4 transition-transform group-hover:scale-105">
-                        <span class="text-2xl sm:text-3xl font-black tracking-wider text-slate-800 group-hover:text-brand-red transition-colors">
-                            {{ strtoupper(substr($marque->nom, 0, 2)) }}
-                        </span>
+                    <!-- Brand Icon / Logo -->
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-100 group-hover:bg-brand-red/5 border border-slate-200 flex items-center justify-center mb-4 transition-transform group-hover:scale-105 p-2 overflow-hidden">
+                        @if ($marque->logo_url)
+                            <img src="{{ $marque->logo_url }}" alt="{{ $marque->nom }}" class="w-full h-full object-contain">
+                        @else
+                            <span class="text-2xl sm:text-3xl font-black tracking-wider text-slate-800 group-hover:text-brand-red transition-colors">
+                                {{ strtoupper(substr($marque->nom, 0, 2)) }}
+                            </span>
+                        @endif
                     </div>
 
                     <h3 class="text-lg font-black text-slate-900 group-hover:text-brand-red transition-colors">

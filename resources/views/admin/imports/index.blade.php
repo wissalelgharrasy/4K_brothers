@@ -69,16 +69,16 @@
             <div>
                 <h3 class="text-sm font-bold text-slate-900 flex items-center">
                     <svg class="w-4 h-4 mr-2 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
-                    Exporter le catalogue (.xlsx)
+                    Exporter le catalogue (PDF)
                 </h3>
                 <p class="text-xs text-slate-500 mt-0.5">
-                    Téléchargez un tableur Excel prêt à l'emploi. Vous pouvez restreindre l'export par marque ou famille.
+                    Générez un catalogue prêt à imprimer ou enregistrer en PDF avec photos, désignation, disponibilité et prix.
                 </p>
             </div>
 
-            <form action="{{ route('admin.export') }}" method="GET" class="flex flex-wrap items-center gap-3">
+            <form action="{{ route('admin.export.pdf') }}" method="GET" target="_blank" class="flex flex-wrap items-center gap-3">
                 <!-- Filter Marque -->
                 <select name="marque_id" class="text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2 pl-3 pr-8">
                     <option value="">Toutes les marques</option>
@@ -97,10 +97,10 @@
 
                 <button type="submit" 
                         class="inline-flex items-center px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer">
-                    <svg class="w-4 h-4 mr-1.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    <svg class="w-4 h-4 mr-1.5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Télécharger l'export Excel
+                    Télécharger le catalogue PDF
                 </button>
             </form>
         </div>

@@ -16,14 +16,21 @@
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-8 sm:p-10 text-white mb-10 shadow-lg border border-slate-700/80">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div>
-                <span class="px-3 py-1 rounded-full bg-brand-red text-white text-xs font-black uppercase tracking-wider">
-                    Constructeur Automobile
-                </span>
-                <h1 class="text-3xl sm:text-4xl font-black mt-3">Pièces Détachées {{ $marque->nom }}</h1>
-                <p class="text-slate-300 text-sm mt-2 max-w-xl">
-                    Sélectionnez votre modèle {{ $marque->nom }} ci-dessous pour accéder au catalogue complet des pièces de carrosserie, optiques et accessoires disponibles.
-                </p>
+            <div class="flex items-center space-x-5">
+                @if ($marque->logo_url)
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl p-2 border border-slate-700/80 flex items-center justify-center shrink-0 shadow-md">
+                        <img src="{{ $marque->logo_url }}" alt="{{ $marque->nom }}" class="w-full h-full object-contain">
+                    </div>
+                @endif
+                <div>
+                    <span class="px-3 py-1 rounded-full bg-brand-red text-white text-xs font-black uppercase tracking-wider">
+                        Constructeur Automobile
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl font-black mt-3">Pièces Détachées {{ $marque->nom }}</h1>
+                    <p class="text-slate-300 text-sm mt-2 max-w-xl">
+                        Sélectionnez votre modèle {{ $marque->nom }} ci-dessous pour accéder au catalogue complet des pièces de carrosserie, optiques et accessoires disponibles.
+                    </p>
+                </div>
             </div>
             <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-2xl p-4 text-center min-w-[140px]">
                 <span class="text-3xl font-black text-brand-red">{{ $vehicules->count() }}</span>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +18,34 @@ class Marque extends Model
         'slug',
         'logo',
     ];
+
+    /**
+     * Get the accessible public URL for the brand logo.
+     */
+    protected function logoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (empty($this->logo)) {
+                    return null;
+                }
+
+                if (str_starts_with($this->logo, 'http://') || str_starts_with($this->logo, 'https://')) {
+                    return $this->logo;
+                }
+
+                if (str_starts_with($this->logo, 'storage/')) {
+                    return asset($this->logo);
+                }
+
+                if (str_starts_with($this->logo, '/')) {
+                    return asset(ltrim($this->logo, '/'));
+                }
+
+                return asset('storage/'.$this->logo);
+            }
+        );
+    }
 
     protected static function booted(): void
     {

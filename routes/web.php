@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FamilleController;
+use App\Http\Controllers\Admin\ImportExportController;
+use App\Http\Controllers\Admin\MarqueController;
+use App\Http\Controllers\Admin\PieceController;
+use App\Http\Controllers\Admin\VehiculeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\CartController;
 use App\Http\Controllers\Public\CatalogController;
@@ -49,22 +55,25 @@ Route::middleware('auth')->group(function () {
 
     // Admin Panel
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // CRUDs
-        Route::resource('marques', \App\Http\Controllers\Admin\MarqueController::class);
-        Route::resource('vehicules', \App\Http\Controllers\Admin\VehiculeController::class);
-        Route::resource('familles', \App\Http\Controllers\Admin\FamilleController::class);
+        Route::resource('marques', MarqueController::class);
+        Route::resource('vehicules', VehiculeController::class);
+        Route::resource('familles', FamilleController::class);
 
         // Pieces & Toggle Active
-        Route::match(['patch', 'post'], 'pieces/{piece}/toggle-active', [\App\Http\Controllers\Admin\PieceController::class, 'toggleActive'])->name('pieces.toggle-active');
-        Route::resource('pieces', \App\Http\Controllers\Admin\PieceController::class);
+        Route::match(['patch', 'post'], 'pieces/{piece}/toggle-active', [PieceController::class, 'toggleActive'])->name('pieces.toggle-active');
+        Route::resource('pieces', PieceController::class);
 
-        // Import & Export Catalogue
-        Route::get('imports/template', [\App\Http\Controllers\Admin\ImportExportController::class, 'downloadTemplate'])->name('imports.template');
-        Route::get('imports/{import}/errors-csv', [\App\Http\Controllers\Admin\ImportExportController::class, 'downloadErrors'])->name('imports.errors-csv');
-        Route::get('export', [\App\Http\Controllers\Admin\ImportExportController::class, 'export'])->name('export');
-        Route::resource('imports', \App\Http\Controllers\Admin\ImportExportController::class)->only(['index', 'create', 'store', 'show']);
+        // Export Catalogue
+        Route::get('exports', [ImportExportController::class, 'exportsIndex'])->name('exports.index');
+        Route::get('catalogue/builder', [ImportExportController::class, 'builder'])->name('catalogue.builder');
+        Route::get('imports/template', [ImportExportController::class, 'downloadTemplate'])->name('imports.template');
+        Route::get('imports/{import}/errors-csv', [ImportExportController::class, 'downloadErrors'])->name('imports.errors-csv');
+        Route::get('export/pdf', [ImportExportController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('export', [ImportExportController::class, 'export'])->name('export');
+        Route::resource('imports', ImportExportController::class)->only(['index', 'create', 'store', 'show']);
     });
 });
 

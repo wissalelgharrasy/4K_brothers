@@ -42,8 +42,8 @@
                 @forelse ($marques as $marque)
                     <tr class="hover:bg-slate-50/60 transition-colors">
                         <td class="p-4">
-                            @if ($marque->logo)
-                                <img src="{{ asset('storage/' . $marque->logo) }}" alt="{{ $marque->nom }}" class="w-10 h-10 object-contain rounded-lg border border-slate-200 p-1">
+                            @if ($marque->logo_url)
+                                <img src="{{ $marque->logo_url }}" alt="{{ $marque->nom }}" class="w-10 h-10 object-contain rounded-lg border border-slate-200 p-1 bg-white" title="{{ $marque->logo }}">
                             @else
                                 <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center font-black text-slate-600 text-xs">
                                     {{ strtoupper(substr($marque->nom, 0, 2)) }}

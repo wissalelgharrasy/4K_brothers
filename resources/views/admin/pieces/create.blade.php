@@ -44,40 +44,66 @@
 
             <!-- Vehicle & Family row -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <!-- Vehicle -->
+
+                <!-- Vehicle searchable select -->
                 <div>
-                    <label for="vehicule_id" class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
                         Véhicule compatible
                     </label>
-                    <select id="vehicule_id" name="vehicule_id" class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                        <option value="">⚠️ Aucun véhicule (statut « À classer »)</option>
-                        @foreach ($marques as $marque)
-                            <optgroup label="{{ $marque->nom }}">
+                    <div class="searchable-select relative" data-target="vehicule_id">
+                        <div class="relative">
+                            <input type="text"
+                                   class="ss-input w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5 pr-9"
+                                   placeholder="Rechercher un véhicule..."
+                                   autocomplete="off">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="ss-dropdown hidden absolute left-0 right-0 top-full z-50 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl text-xs" style="max-height: 220px; overflow-y: auto; overscroll-behavior: contain;">
+                            @foreach ($marques as $marque)
+                                <div class="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-50 border-t border-slate-100 ss-group sticky top-0 z-10">{{ $marque->nom }}</div>
                                 @foreach ($marque->vehicules as $vehicule)
-                                    <option value="{{ $vehicule->id }}" {{ old('vehicule_id') == $vehicule->id ? 'selected' : '' }}>
-                                        {{ $marque->nom }} {{ $vehicule->nom }}
-                                    </option>
+                                    <div class="ss-option py-2 px-3 hover:bg-brand-red/5 hover:text-brand-red cursor-pointer"
+                                         data-value="{{ $vehicule->id }}"
+                                         data-label="{{ $marque->nom }} {{ $vehicule->nom }}"
+                                         {{ old('vehicule_id') == $vehicule->id ? 'data-selected=true' : '' }}>
+                                        {{ $marque->nom }} — {{ $vehicule->nom }}
+                                    </div>
                                 @endforeach
-                            </optgroup>
-                        @endforeach
-                    </select>
-                    <span class="text-[11px] text-slate-400 mt-1 block">Laissez vide si le véhicule est inconnu (sera classé plus tard).</span>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="vehicule_id" name="vehicule_id" value="{{ old('vehicule_id') }}">
+                    </div>
                 </div>
 
-                <!-- Family -->
+                <!-- Family searchable select -->
                 <div>
-                    <label for="famille_id" class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
                         Famille de pièce <span class="text-brand-red">*</span>
                     </label>
-                    <select id="famille_id" name="famille_id" required class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                        <option value="">Sélectionner une famille...</option>
-                        @foreach ($familles as $famille)
-                            <option value="{{ $famille->id }}" {{ old('famille_id') == $famille->id ? 'selected' : '' }}>
-                                {{ $famille->nom }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="searchable-select relative" data-target="famille_id" data-required="true">
+                        <div class="relative">
+                            <input type="text"
+                                   class="ss-input w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5 pr-9"
+                                   placeholder="Rechercher une famille..."
+                                   autocomplete="off">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="ss-dropdown hidden absolute left-0 right-0 top-full z-50 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl text-xs" style="max-height: 220px; overflow-y: auto; overscroll-behavior: contain;">
+                            @foreach ($familles as $famille)
+                                <div class="ss-option py-2 px-3 hover:bg-brand-red/5 hover:text-brand-red cursor-pointer"
+                                     data-value="{{ $famille->id }}"
+                                     data-label="{{ $famille->nom }}"
+                                     {{ old('famille_id') == $famille->id ? 'data-selected=true' : '' }}>
+                                    {{ $famille->nom }}
+                                </div>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="famille_id" name="famille_id" value="{{ old('famille_id') }}">
+                    </div>
                 </div>
 
             </div>
@@ -209,21 +235,136 @@
 
 @push('scripts')
 <script>
-    function updatePositionFields(pos) {
-        const rlFields = document.getElementById('rl-fields');
-        const singleFields = document.getElementById('single-fields');
-        if (pos === 'RL') {
-            rlFields.classList.remove('hidden');
-            singleFields.classList.add('hidden');
-        } else {
-            rlFields.classList.add('hidden');
-            singleFields.classList.remove('hidden');
-        }
-    }
-    // Init on load
+    /* ── Searchable Select Component ──────────────────────────────── */
     document.addEventListener('DOMContentLoaded', () => {
-        updatePositionFields(document.getElementById('position').value);
+
+        /* Position toggle */
+        function updatePositionFields(pos) {
+            document.getElementById('rl-fields').classList.toggle('hidden', pos !== 'RL');
+            document.getElementById('single-fields').classList.toggle('hidden', pos === 'RL');
+        }
+        const posEl = document.getElementById('position');
+        if (posEl) {
+            posEl.addEventListener('change', e => updatePositionFields(e.target.value));
+            updatePositionFields(posEl.value);
+        }
+
+        /* Searchable selects */
+        document.querySelectorAll('.searchable-select').forEach(container => {
+            const input    = container.querySelector('.ss-input');
+            const dropdown = container.querySelector('.ss-dropdown');
+            const hidden   = container.querySelector('input[type="hidden"]');
+            const options  = container.querySelectorAll('.ss-option');
+            const groups   = container.querySelectorAll('.ss-group');
+            const isRequired = container.dataset.required === 'true';
+
+            /* Set initial label if value pre-selected */
+            const preSelected = container.querySelector('.ss-option[data-selected]');
+            if (preSelected) {
+                input.value = preSelected.dataset.label || preSelected.textContent.trim();
+                preSelected.classList.add('bg-brand-red/10', 'font-bold', 'text-brand-red');
+            }
+
+            /* Prevent Enter from submitting the form while typing in search */
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const first = Array.from(options).find(o => !o.classList.contains('hidden'));
+                    if (first) first.click();
+                } else if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+
+            /* Open dropdown */
+            input.addEventListener('focus', () => {
+                dropdown.classList.remove('hidden');
+                dropdown.scrollTop = 0;
+                filterOptions('');
+            });
+
+            /* Prevent mouse wheel scroll from scrolling the main browser page */
+            dropdown.addEventListener('wheel', e => {
+                const delta = e.deltaY;
+                const up = delta < 0;
+                const down = delta > 0;
+                const atTop = dropdown.scrollTop <= 0;
+                const atBottom = dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight - 1;
+
+                if ((up && atTop) || (down && atBottom)) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            /* Filter while typing */
+            input.addEventListener('input', () => {
+                dropdown.scrollTop = 0;
+                filterOptions(input.value);
+            });
+
+            /* Click outside → close */
+            document.addEventListener('click', e => {
+                if (!container.contains(e.target)) closeDropdown();
+            });
+
+            /* Select an option */
+            options.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const val   = opt.dataset.value ?? '';
+                    const label = opt.dataset.label || opt.textContent.trim();
+                    hidden.value = val;
+                    input.value  = label;
+                    options.forEach(o => o.classList.remove('bg-brand-red/10', 'font-bold', 'text-brand-red'));
+                    opt.classList.add('bg-brand-red/10', 'font-bold', 'text-brand-red');
+                    closeDropdown();
+                });
+            });
+
+            function filterOptions(query) {
+                const q = query.toLowerCase().trim();
+                let anyVisible = false;
+                options.forEach(opt => {
+                    const text = (opt.dataset.label || opt.textContent).toLowerCase();
+                    const show = q === '' || text.includes(q);
+                    opt.classList.toggle('hidden', !show);
+                    if (show) anyVisible = true;
+                });
+                /* Hide group headers that have no visible children */
+                groups.forEach(group => {
+                    let sibling = group.nextElementSibling;
+                    let groupVisible = false;
+                    while (sibling && !sibling.classList.contains('ss-group')) {
+                        if (sibling.classList.contains('ss-option') && !sibling.classList.contains('hidden')) {
+                            groupVisible = true;
+                        }
+                        sibling = sibling.nextElementSibling;
+                    }
+                    group.classList.toggle('hidden', !groupVisible);
+                });
+            }
+
+            function closeDropdown() {
+                dropdown.classList.add('hidden');
+                /* If nothing selected and required, clear input */
+                if (!hidden.value && isRequired) input.value = '';
+                /* If nothing selected and not required, keep empty */
+                if (!hidden.value && !isRequired) input.value = '';
+            }
+        });
     });
 </script>
+<style>
+    .ss-dropdown {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+    .ss-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    .ss-dropdown::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+    }
+</style>
 @endpush
 @endsection

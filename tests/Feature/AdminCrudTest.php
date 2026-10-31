@@ -8,7 +8,9 @@ use App\Models\Piece;
 use App\Models\User;
 use App\Models\Vehicule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminCrudTest extends TestCase
@@ -73,6 +75,51 @@ class AdminCrudTest extends TestCase
         $deleteResponse = $this->actingAs($this->admin)->delete("/admin/marques/{$marque->id}");
         $deleteResponse->assertRedirect('/admin/marques');
         $this->assertDatabaseMissing('marques', ['id' => $marque->id]);
+    }
+
+    public function test_admin_can_upload_brand_logo_stored_in_folder_and_url_in_database(): void
+    {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('dacia_logo.png', 10, 'image/png');
+
+        $response = $this->actingAs($this->admin)->post('/admin/marques', [
+            'nom' => 'Dacia Test',
+            'logo' => $file,
+        ]);
+
+        $response->assertRedirect('/admin/marques');
+
+        $marque = Marque::where('nom', 'Dacia Test')->firstOrFail();
+
+        // 1. URL must be stored in database
+        $this->assertNotNull($marque->logo);
+        $this->assertStringStartsWith('storage/marques/', $marque->logo);
+
+        // 2. Image must be stored in the public folder on disk
+        $relativePath = str_replace('storage/', '', $marque->logo);
+        Storage::disk('public')->assertExists($relativePath);
+
+        // 3. Model accessor returns the asset URL
+        $this->assertStringContainsString($marque->logo, $marque->logo_url);
+
+        // 4. Updating with a new logo replaces file in folder and updates URL in DB
+        $newFile = UploadedFile::fake()->create('dacia_new.png', 12, 'image/png');
+        $updateResponse = $this->actingAs($this->admin)->put("/admin/marques/{$marque->id}", [
+            'nom' => 'Dacia Test Updated',
+            'logo' => $newFile,
+        ]);
+
+        $updateResponse->assertRedirect('/admin/marques');
+        Storage::disk('public')->assertMissing($relativePath);
+
+        $marque->refresh();
+        $newRelativePath = str_replace('storage/', '', $marque->logo);
+        Storage::disk('public')->assertExists($newRelativePath);
+
+        // 5. Deleting marque deletes logo file from folder
+        $this->actingAs($this->admin)->delete("/admin/marques/{$marque->id}");
+        Storage::disk('public')->assertMissing($newRelativePath);
     }
 
     public function test_marque_cannot_be_deleted_if_it_has_pieces_without_force(): void

@@ -35,12 +35,19 @@ class MarqueController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:100|unique:marques,nom',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'logo_url' => 'nullable|string|max:255',
         ]);
 
         $logoPath = null;
         if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('marques', 'public');
+            $file = $request->file('logo');
+            $extension = $file->getClientOriginalExtension() ?: 'png';
+            $filename = Str::slug($validated['nom']).'-'.time().'.'.$extension;
+            $savedPath = $file->storeAs('marques', $filename, 'public');
+            $logoPath = 'storage/'.$savedPath;
+        } elseif (! empty($validated['logo_url'])) {
+            $logoPath = $validated['logo_url'];
         }
 
         Marque::create([
@@ -61,14 +68,26 @@ class MarqueController extends Controller
     {
         $validated = $request->validate([
             'nom' => ['required', 'string', 'max:100', Rule::unique('marques', 'nom')->ignore($marque->id)],
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'logo_url' => 'nullable|string|max:255',
+            'supprimer_logo' => 'nullable|boolean',
         ]);
 
+        if ($request->boolean('supprimer_logo')) {
+            $this->deleteLogoFile($marque->logo);
+            $marque->logo = null;
+        }
+
         if ($request->hasFile('logo')) {
-            if ($marque->logo && Storage::disk('public')->exists($marque->logo)) {
-                Storage::disk('public')->delete($marque->logo);
-            }
-            $marque->logo = $request->file('logo')->store('marques', 'public');
+            $this->deleteLogoFile($marque->logo);
+            $file = $request->file('logo');
+            $extension = $file->getClientOriginalExtension() ?: 'png';
+            $filename = Str::slug($validated['nom']).'-'.time().'.'.$extension;
+            $savedPath = $file->storeAs('marques', $filename, 'public');
+            $marque->logo = 'storage/'.$savedPath;
+        } elseif ($request->filled('logo_url')) {
+            $this->deleteLogoFile($marque->logo);
+            $marque->logo = $validated['logo_url'];
         }
 
         $marque->nom = $validated['nom'];
@@ -82,16 +101,35 @@ class MarqueController extends Controller
     {
         $piecesCount = $marque->pieces()->count();
 
-        if ($piecesCount > 0 && !$request->boolean('force')) {
+        if ($piecesCount > 0 && ! $request->boolean('force')) {
             return back()->with('error', "Impossible de supprimer la marque '{$marque->nom}' car elle contient encore {$piecesCount} pièce(s) liée(s). Veuillez d'abord supprimer ou reclasser ces pièces.");
         }
 
-        if ($marque->logo && Storage::disk('public')->exists($marque->logo)) {
-            Storage::disk('public')->delete($marque->logo);
-        }
+        $this->deleteLogoFile($marque->logo);
 
         $marque->delete();
 
         return redirect()->route('admin.marques.index')->with('success', "La marque '{$marque->nom}' a été supprimée.");
+    }
+
+    /**
+     * Delete existing logo file from public storage if applicable.
+     */
+    private function deleteLogoFile(?string $logo): void
+    {
+        if (empty($logo)) {
+            return;
+        }
+
+        if (str_starts_with($logo, 'http://') || str_starts_with($logo, 'https://')) {
+            return;
+        }
+
+        $relativePath = Str::after($logo, 'storage/');
+        $relativePath = ltrim($relativePath, '/');
+
+        if (Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
+        }
     }
 }
