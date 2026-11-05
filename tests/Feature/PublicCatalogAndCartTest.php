@@ -2,9 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Marque;
+use App\Models\Famille;
 use App\Models\Piece;
-use App\Models\Vehicule;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -49,7 +48,7 @@ class PublicCatalogAndCartTest extends TestCase
         $response->assertSee('OPTIQUE DACIA DUSTER 18-');
 
         // Test filtering by family
-        $optiqueFamilleId = \App\Models\Famille::where('nom', 'OPTIQUE')->value('id');
+        $optiqueFamilleId = Famille::where('nom', 'OPTIQUE')->value('id');
         $filterResponse = $this->get(route('catalog.vehicule', [
             'marque' => 'dacia',
             'vehicule' => 'duster',
@@ -152,5 +151,25 @@ class PublicCatalogAndCartTest extends TestCase
         $this->assertStringContainsString('0612345678', $message);
         $this->assertStringContainsString('Casablanca, Maarif', $message);
         $this->assertStringContainsString('Livraison urgente svp', $message);
+    }
+
+    public function test_marques_page_is_accessible_and_lists_all_brands(): void
+    {
+        $response = $this->get(route('catalog.marques'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Constructeurs & Marques Automobiles', false);
+        $response->assertSee('Dacia');
+        $response->assertSee('Renault');
+    }
+
+    public function test_navigation_menu_contains_home_and_marques_links(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Accueil');
+        $response->assertSee('Marques');
+        $response->assertSee(route('catalog.marques'));
     }
 }

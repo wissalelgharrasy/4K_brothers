@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Famille;
 use App\Models\Marque;
 use App\Models\Piece;
-use App\Models\User;
 use App\Models\Vehicule;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,8 +32,8 @@ class CatalogModelAndSeederTest extends TestCase
         // Check at least 30 pieces
         $this->assertGreaterThanOrEqual(30, Piece::count());
 
-        // Check pieces a classer (null vehicule_id)
-        $this->assertGreaterThanOrEqual(1, Piece::aClasser()->count());
+        // Check all pieces have a mandatory vehicle assigned (no null vehicule_id)
+        $this->assertEquals(0, Piece::whereNull('vehicule_id')->count());
 
         // Check RL position exists
         $this->assertTrue(Piece::where('position', 'RL')->exists());
@@ -93,7 +92,11 @@ class CatalogModelAndSeederTest extends TestCase
     {
         $famille = Famille::create(['nom' => 'CALANDRE']);
 
+        $marque = Marque::create(['nom' => 'Dacia']);
+        $vehicule = Vehicule::create(['marque_id' => $marque->id, 'nom' => 'Sandero']);
+
         $piece = Piece::create([
+            'vehicule_id' => $vehicule->id,
             'famille_id' => $famille->id,
             'designation' => 'CALANDRE TEST',
             'annee_debut' => 2018,

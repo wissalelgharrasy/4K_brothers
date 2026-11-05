@@ -31,7 +31,6 @@
             <thead class="bg-slate-50 text-slate-500 uppercase font-black text-[10px] tracking-wider border-b border-slate-100">
                 <tr>
                     <th class="p-4">Famille</th>
-                    <th class="p-4">Slug</th>
                     <th class="p-4">Nombre de Pièces</th>
                     <th class="p-4 text-right">Actions</th>
                 </tr>
@@ -41,9 +40,6 @@
                     <tr class="hover:bg-slate-50/60 transition-colors">
                         <td class="p-4 font-black text-slate-900 text-sm">
                             {{ $famille->nom }}
-                        </td>
-                        <td class="p-4 text-slate-500 font-mono text-[11px]">
-                            {{ $famille->slug }}
                         </td>
                         <td class="p-4">
                             <a href="{{ route('admin.pieces.index', ['famille_id' => $famille->id]) }}" class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
@@ -66,7 +62,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="p-8 text-center text-slate-400">
+                        <td colspan="3" class="p-8 text-center text-slate-400">
                             Aucune famille trouvée.
                         </td>
                     </tr>

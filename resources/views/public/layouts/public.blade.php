@@ -50,19 +50,40 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2 group">
-                        <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-12 w-auto transition-transform group-hover:scale-105">
+                        <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-14 w-auto transition-transform group-hover:scale-105">
                     </a>
                 </div>
 
+                <!-- Desktop Navigation Menu (Accueil & Marques) -->
+                <nav class="hidden md:flex items-center space-x-2 ml-4 lg:ml-6">
+                    <!-- Accueil -->
+                    <a href="{{ route('home') }}" 
+                       class="inline-flex items-center px-3.5 py-2 rounded-xl text-sm font-bold transition-all {{ request()->routeIs('home') ? 'bg-brand-red text-white shadow-md shadow-brand-red/30' : 'text-slate-300 hover:text-white hover:bg-slate-800' }}">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Accueil
+                    </a>
+
+                    <!-- Marques -->
+                    <a href="{{ route('catalog.marques') }}" 
+                       class="inline-flex items-center px-3.5 py-2 rounded-xl text-sm font-bold transition-all {{ (request()->routeIs('catalog.marques') || request()->routeIs('catalog.marque') || request()->routeIs('catalog.vehicule')) ? 'bg-brand-red text-white shadow-md shadow-brand-red/30' : 'text-slate-300 hover:text-white hover:bg-slate-800' }}">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Marques
+                    </a>
+                </nav>
+
                 <!-- Global Search Bar (Desktop) -->
-                <div class="hidden md:flex flex-1 max-w-lg mx-8">
+                <div class="hidden lg:flex flex-1 max-w-md mx-6">
                     <form action="{{ route('catalog.search') }}" method="GET" class="w-full relative">
                         <input type="text" 
                                name="q" 
                                value="{{ request('q') }}" 
                                placeholder="Rechercher une pièce, optique, pare-choc, Logan, Clio..." 
                                class="w-full bg-slate-800 text-white placeholder-slate-400 text-sm rounded-full pl-5 pr-12 py-2.5 border border-slate-700 focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/30 transition-all">
-                        <button type="submit" class="absolute right-1.5 top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center hover:bg-brand-redHover transition-colors">
+                        <button type="submit" class="absolute right-1.5 top-1.5 w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center hover:bg-brand-redHover transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -70,21 +91,16 @@
                     </form>
                 </div>
 
-                <!-- Navigation Links & Cart -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Navigation Actions & Cart -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
                     
-                    <!-- Brands Quick Dropdown / Link -->
-                    <a href="{{ route('home') }}#marques" class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
-                        Marques
-                    </a>
-
                     <!-- Cart Button -->
                     @php
                         $cartService = app(\App\Services\CartService::class);
                         $cartCount = $cartService->count();
                     @endphp
                     <a href="{{ route('cart.index') }}" 
-                       class="relative inline-flex items-center px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white hover:border-brand-red transition-all group">
+                       class="relative inline-flex items-center px-3.5 sm:px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white hover:border-brand-red transition-all group">
                         <svg class="w-5 h-5 text-brand-red group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
@@ -99,29 +115,65 @@
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}" 
                        target="_blank" 
                        rel="noopener"
-                       class="hidden lg:inline-flex items-center px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-md transition-colors">
+                       class="hidden sm:inline-flex items-center px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-md transition-colors">
                         <svg class="w-4 h-4 mr-1.5 fill-current" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
                         </svg>
                         Commander
                     </a>
+
+                    <!-- Mobile Menu Hamburger Button -->
+                    <button type="button" 
+                            id="mobile-menu-toggle"
+                            onclick="toggleMobileMenu()" 
+                            class="md:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
+                            aria-label="Menu principal">
+                        <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
-            <!-- Mobile Search Bar -->
-            <div class="md:hidden pb-4 pt-1">
-                <form action="{{ route('catalog.search') }}" method="GET" class="w-full relative">
-                    <input type="text" 
-                           name="q" 
-                           value="{{ request('q') }}" 
-                           placeholder="Rechercher une pièce, modèle, optique..." 
-                           class="w-full bg-slate-800 text-white placeholder-slate-400 text-sm rounded-full pl-4 pr-11 py-2.5 border border-slate-700 focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/30">
-                    <button type="submit" class="absolute right-1.5 top-1.5 w-7 h-7 rounded-full bg-brand-red text-white flex items-center justify-center">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            <!-- Mobile Navigation Drawer / Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 border-t border-slate-800/80 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
+                <!-- Links -->
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ route('home') }}" 
+                       class="flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('home') ? 'bg-brand-red text-white shadow-md shadow-brand-red/30' : 'bg-slate-800 text-slate-300 hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
-                    </button>
-                </form>
+                        Accueil
+                    </a>
+
+                    <a href="{{ route('catalog.marques') }}" 
+                       class="flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold transition-all {{ (request()->routeIs('catalog.marques') || request()->routeIs('catalog.marque') || request()->routeIs('catalog.vehicule')) ? 'bg-brand-red text-white shadow-md shadow-brand-red/30' : 'bg-slate-800 text-slate-300 hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Marques
+                    </a>
+                </div>
+
+                <!-- Mobile Search Bar -->
+                <div>
+                    <form action="{{ route('catalog.search') }}" method="GET" class="w-full relative">
+                        <input type="text" 
+                               name="q" 
+                               value="{{ request('q') }}" 
+                               placeholder="Rechercher une pièce, modèle, optique..." 
+                               class="w-full bg-slate-800 text-white placeholder-slate-400 text-xs sm:text-sm rounded-xl pl-4 pr-11 py-2.5 border border-slate-700 focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/30">
+                        <button type="submit" class="absolute right-1.5 top-1.5 w-7 h-7 rounded-lg bg-brand-red text-white flex items-center justify-center cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
@@ -191,7 +243,7 @@
                 
                 <!-- Brand Bio -->
                 <div class="md:col-span-2">
-                    <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-12 w-auto mb-4">
+                    <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-14 w-auto mb-4">
                     <p class="text-sm text-slate-400 max-w-sm">
                         Votre partenaire auto privilégié pour les pièces de carrosserie, pare-chocs, optiques, calandres et feux de signalisation Dacia, Renault et toutes marques.
                     </p>
@@ -203,8 +255,13 @@
 
                 <!-- Marques -->
                 <div>
-                    <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Marques populaires</h3>
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Marques & Modèles</h3>
                     <ul class="space-y-2 text-sm">
+                        <li>
+                            <a href="{{ route('catalog.marques') }}" class="font-bold text-brand-red hover:underline inline-flex items-center">
+                                Toutes les marques &rarr;
+                            </a>
+                        </li>
                         <li><a href="{{ route('catalog.marque', 'dacia') }}" class="hover:text-brand-red transition-colors">Dacia (Duster, Sandero, Logan...)</a></li>
                         <li><a href="{{ route('catalog.marque', 'renault') }}" class="hover:text-brand-red transition-colors">Renault (Clio, Express, Kangoo...)</a></li>
                         <li><a href="{{ route('catalog.marque', 'peugeot') }}" class="hover:text-brand-red transition-colors">Peugeot</a></li>
@@ -240,6 +297,24 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const hamburger = document.getElementById('hamburger-icon');
+            const close = document.getElementById('close-icon');
+
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                hamburger.classList.add('hidden');
+                close.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                hamburger.classList.remove('hidden');
+                close.classList.add('hidden');
+            }
+        }
+    </script>
 
     @stack('scripts')
 </body>

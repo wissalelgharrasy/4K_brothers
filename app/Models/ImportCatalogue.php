@@ -54,6 +54,6 @@ class ImportCatalogue extends Model
      */
     public function hasErrors(): bool
     {
-        return $this->nb_erreurs > 0 || !empty($this->rapport_erreurs_json);
+        return $this->nb_erreurs > 0 || ! empty($this->rapport_erreurs_json);
     }
 }

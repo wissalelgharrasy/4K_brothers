@@ -20,7 +20,6 @@ class DashboardController extends Controller
             'familles_count' => Famille::count(),
             'pieces_count' => Piece::count(),
             'pieces_actives_count' => Piece::actif()->count(),
-            'pieces_a_classer_count' => Piece::aClasser()->count(),
             'pieces_rl_count' => Piece::where('position', 'RL')->count(),
         ];
 

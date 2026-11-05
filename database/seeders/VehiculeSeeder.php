@@ -43,7 +43,7 @@ class VehiculeSeeder extends Seeder
 
         foreach ($data as $marqueSlug => $vehicules) {
             $marque = Marque::where('slug', $marqueSlug)->first();
-            if (!$marque) {
+            if (! $marque) {
                 continue;
             }
 

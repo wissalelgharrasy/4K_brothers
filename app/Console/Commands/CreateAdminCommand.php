@@ -49,6 +49,7 @@ class CreateAdminCommand extends Command
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
             }
+
             return self::FAILURE;
         }
 
@@ -60,6 +61,7 @@ class CreateAdminCommand extends Command
         ]);
 
         $this->info("Administrateur '{$user->email}' créé avec succès !");
+
         return self::SUCCESS;
     }
 }

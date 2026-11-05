@@ -271,8 +271,11 @@ class AdminCrudTest extends TestCase
 
     public function test_admin_can_toggle_piece_active_status(): void
     {
+        $marque = Marque::create(['nom' => 'Renault', 'slug' => 'renault']);
+        $vehicule = Vehicule::create(['marque_id' => $marque->id, 'nom' => 'Captur', 'slug' => 'captur']);
         $famille = Famille::create(['nom' => 'OPTIQUES', 'slug' => 'optiques']);
         $piece = Piece::create([
+            'vehicule_id' => $vehicule->id,
             'designation' => 'Feu Arrière Test',
             'famille_id' => $famille->id,
             'annee_debut' => 2020,
@@ -299,41 +302,22 @@ class AdminCrudTest extends TestCase
         $this->assertTrue($piece->actif);
     }
 
-    public function test_admin_can_filter_a_classer_pieces(): void
+    public function test_admin_cannot_create_piece_without_vehicule(): void
     {
-        $marque = Marque::create(['nom' => 'Renault', 'slug' => 'renault']);
-        $vehicule = Vehicule::create(['marque_id' => $marque->id, 'nom' => 'Clio 4', 'slug' => 'clio-4']);
         $famille = Famille::create(['nom' => 'OPTIQUES', 'slug' => 'optiques']);
 
-        $classified = Piece::create([
-            'designation' => 'Pièce Classée Clio 4',
-            'famille_id' => $famille->id,
-            'vehicule_id' => $vehicule->id,
-            'annee_debut' => 2016,
-            'position' => 'AV',
-            'prix_ttc' => 300.00,
-            'actif' => true,
-        ]);
-
-        $unclassified = Piece::create([
-            'designation' => 'Pièce Sans Véhicule À Classer',
+        $response = $this->actingAs($this->admin)->post('/admin/pieces', [
+            'designation' => 'Pièce Sans Véhicule Rejetée',
             'famille_id' => $famille->id,
             'vehicule_id' => null,
-            'annee_debut' => 2016,
+            'annee_debut' => 2020,
             'position' => 'AV',
-            'prix_ttc' => 300.00,
-            'actif' => true,
+            'prix_ttc' => 250.00,
+            'en_stock' => '1',
         ]);
 
-        $responseClasser = $this->actingAs($this->admin)->get('/admin/pieces?a_classer=1');
-        $responseClasser->assertStatus(200);
-        $responseClasser->assertSee('Pièce Sans Véhicule À Classer');
-        $responseClasser->assertDontSee('Pièce Classée Clio 4');
-
-        $responseNormal = $this->actingAs($this->admin)->get('/admin/pieces?a_classer=0');
-        $responseNormal->assertStatus(200);
-        $responseNormal->assertSee('Pièce Classée Clio 4');
-        $responseNormal->assertDontSee('Pièce Sans Véhicule À Classer');
+        $response->assertSessionHasErrors('vehicule_id');
+        $this->assertEquals(0, Piece::where('designation', 'Pièce Sans Véhicule Rejetée')->count());
     }
 
     public function test_artisan_admin_create_command(): void

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\FamilleController;
 use App\Http\Controllers\Admin\ImportExportController;
 use App\Http\Controllers\Admin\MarqueController;
 use App\Http\Controllers\Admin\PieceController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VehiculeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\CartController;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/marques', [CatalogController::class, 'marques'])->name('catalog.marques');
 Route::get('/recherche', [CatalogController::class, 'search'])->name('catalog.search');
 
 // Cart
@@ -62,18 +64,26 @@ Route::middleware('auth')->group(function () {
         Route::resource('vehicules', VehiculeController::class);
         Route::resource('familles', FamilleController::class);
 
-        // Pieces & Toggle Active
+        // Pieces, Toggle Active & Quick Stock Management
         Route::match(['patch', 'post'], 'pieces/{piece}/toggle-active', [PieceController::class, 'toggleActive'])->name('pieces.toggle-active');
+        Route::match(['patch', 'post'], 'pieces/{piece}/stock', [PieceController::class, 'updateStock'])->name('pieces.update-stock');
         Route::resource('pieces', PieceController::class);
 
-        // Export Catalogue
-        Route::get('exports', [ImportExportController::class, 'exportsIndex'])->name('exports.index');
+        // Catalogue sur mesure & Export PDF
         Route::get('catalogue/builder', [ImportExportController::class, 'builder'])->name('catalogue.builder');
-        Route::get('imports/template', [ImportExportController::class, 'downloadTemplate'])->name('imports.template');
-        Route::get('imports/{import}/errors-csv', [ImportExportController::class, 'downloadErrors'])->name('imports.errors-csv');
         Route::get('export/pdf', [ImportExportController::class, 'exportPdf'])->name('export.pdf');
         Route::get('export', [ImportExportController::class, 'export'])->name('export');
-        Route::resource('imports', ImportExportController::class)->only(['index', 'create', 'store', 'show']);
+
+        // Anciennes routes d'import et export redirigées vers le tableau de bord
+        Route::redirect('imports', '/admin')->name('imports.index');
+        Route::redirect('exports', '/admin')->name('exports.index');
+        Route::any('imports/{any}', fn () => redirect()->route('admin.dashboard'))->where('any', '.*');
+
+        // Profils & Équipe Administrateur
+        Route::post('users', [UserController::class, 'store'])->name('users.store');
+        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password.update');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });
 

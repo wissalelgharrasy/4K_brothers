@@ -13,6 +13,10 @@ class Piece extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'stock' => 10,
+    ];
+
     protected $fillable = [
         'vehicule_id',
         'famille_id',
@@ -21,6 +25,7 @@ class Piece extends Model
         'position',
         'variante',
         'prix_ttc',
+        'stock',
         'dispo_droite',
         'dispo_gauche',
         'en_stock',
@@ -33,6 +38,7 @@ class Piece extends Model
         return [
             'annee_debut' => 'integer',
             'prix_ttc' => 'decimal:2',
+            'stock' => 'integer',
             'dispo_droite' => 'boolean',
             'dispo_gauche' => 'boolean',
             'en_stock' => 'boolean',
@@ -64,7 +70,11 @@ class Piece extends Model
      */
     public function isDisponible(?string $cote = null): bool
     {
-        if (!$this->actif) {
+        if (! $this->actif) {
+            return false;
+        }
+
+        if ($this->stock !== null && (int) $this->stock <= 0) {
             return false;
         }
 
@@ -88,11 +98,66 @@ class Piece extends Model
     }
 
     /**
-     * Returns true if piece is unassigned to a vehicle (À classer).
+     * Décrémente la quantité en stock lors d'une commande.
      */
-    public function isAClasser(): bool
+    public function decrementStock(int $quantity = 1): void
     {
-        return is_null($this->vehicule_id);
+        $newStock = max(0, (int) $this->stock - max(1, $quantity));
+        $this->stock = $newStock;
+
+        if ($newStock === 0) {
+            $this->en_stock = false;
+            if ($this->isDoubleCote()) {
+                $this->dispo_droite = false;
+                $this->dispo_gauche = false;
+            }
+        }
+
+        $this->save();
+    }
+
+    /**
+     * Ajoute du stock (réapprovisionnement).
+     */
+    public function addStock(int $quantity): void
+    {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        $this->stock = (int) $this->stock + $quantity;
+        $this->en_stock = true;
+
+        if ($this->isDoubleCote()) {
+            $this->dispo_droite = true;
+            $this->dispo_gauche = true;
+        }
+
+        $this->save();
+    }
+
+    /**
+     * Modifie directement la valeur du stock.
+     */
+    public function setStock(int $quantity): void
+    {
+        $this->stock = max(0, $quantity);
+
+        if ($this->stock === 0) {
+            $this->en_stock = false;
+            if ($this->isDoubleCote()) {
+                $this->dispo_droite = false;
+                $this->dispo_gauche = false;
+            }
+        } else {
+            $this->en_stock = true;
+            if ($this->isDoubleCote() && ! $this->dispo_droite && ! $this->dispo_gauche) {
+                $this->dispo_droite = true;
+                $this->dispo_gauche = true;
+            }
+        }
+
+        $this->save();
     }
 
     /**
@@ -101,7 +166,7 @@ class Piece extends Model
     protected function formattedPrix(): Attribute
     {
         return Attribute::make(
-            get: fn () => number_format((float) $this->prix_ttc, 2, ',', ' ') . ' ' . config('shop.currency_label', 'DH')
+            get: fn () => number_format((float) $this->prix_ttc, 2, ',', ' ').' '.config('shop.currency_label', 'DH')
         );
     }
 
@@ -130,12 +195,14 @@ class Piece extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!empty($this->image)) {
+                if (! empty($this->image)) {
                     if (str_starts_with($this->image, 'http')) {
                         return $this->image;
                     }
-                    return asset('storage/' . ltrim($this->image, '/'));
+
+                    return asset('storage/'.ltrim($this->image, '/'));
                 }
+
                 return asset('images/placeholders/default.svg');
             }
         );
@@ -146,7 +213,7 @@ class Piece extends Model
      */
     public function getSlugAttribute(): string
     {
-        return Str::slug($this->designation . '-' . $this->id);
+        return Str::slug($this->designation.'-'.$this->id);
     }
 
     /**
@@ -158,45 +225,29 @@ class Piece extends Model
     }
 
     /**
-     * Scope for items pending classification (vehicule_id is null).
-     */
-    public function scopeAClasser(Builder $query): Builder
-    {
-        return $query->whereNull('vehicule_id');
-    }
-
-    /**
-     * Scope for items assigned to a vehicle.
-     */
-    public function scopeClasse(Builder $query): Builder
-    {
-        return $query->whereNotNull('vehicule_id');
-    }
-
-    /**
      * Filter scope for search and criteria.
      */
     public function scopeFiltres(Builder $query, array $filtres): Builder
     {
-        if (!empty($filtres['famille_id'])) {
+        if (! empty($filtres['famille_id'])) {
             $query->where('famille_id', $filtres['famille_id']);
         }
 
-        if (!empty($filtres['annee'])) {
+        if (! empty($filtres['annee'])) {
             $query->where('annee_debut', $filtres['annee']);
         }
 
-        if (!empty($filtres['position'])) {
+        if (! empty($filtres['position'])) {
             $query->where('position', $filtres['position']);
         }
 
-        if (!empty($filtres['variante'])) {
-            $query->where('variante', 'like', '%' . $filtres['variante'] . '%');
+        if (! empty($filtres['variante'])) {
+            $query->where('variante', 'like', '%'.$filtres['variante'].'%');
         }
 
         if (isset($filtres['disponible']) && $filtres['disponible'] !== '') {
             if ($filtres['disponible'] === '1' || $filtres['disponible'] === true) {
-                $query->where(function ($q) {
+                $query->where('stock', '>', 0)->where(function ($q) {
                     $q->where(function ($sub) {
                         $sub->where('position', 'RL')
                             ->where(fn ($s) => $s->where('dispo_droite', true)->orWhere('dispo_gauche', true));
@@ -207,7 +258,7 @@ class Piece extends Model
                 });
             } elseif ($filtres['disponible'] === '0' || $filtres['disponible'] === false) {
                 $query->where(function ($q) {
-                    $q->where(function ($sub) {
+                    $q->where('stock', '<=', 0)->orWhere(function ($sub) {
                         $sub->where('position', 'RL')
                             ->where('dispo_droite', false)
                             ->where('dispo_gauche', false);
@@ -219,11 +270,11 @@ class Piece extends Model
             }
         }
 
-        if (!empty($filtres['search'])) {
+        if (! empty($filtres['search'])) {
             $search = trim((string) $filtres['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('designation', 'like', "%{$search}%")
-                  ->orWhere('variante', 'like', "%{$search}%");
+                    ->orWhere('variante', 'like', "%{$search}%");
             });
         }
 

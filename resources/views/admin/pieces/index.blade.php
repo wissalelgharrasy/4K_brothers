@@ -6,18 +6,7 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Warning banner if there are pieces "À classer" -->
-    @if ($aClasserCount > 0 && request('a_classer') !== '1')
-        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-between">
-            <div class="flex items-center space-x-3 text-xs">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                <span><strong>Attention :</strong> Vous avez <strong>{{ $aClasserCount }}</strong> pièce(s) orpheline(s) sans véhicule attribué.</span>
-            </div>
-            <a href="{{ route('admin.pieces.index', ['a_classer' => '1']) }}" class="text-xs font-black text-amber-800 underline">
-                Filtrer les pièces à classer &rarr;
-            </a>
-        </div>
-    @endif
+
 
     <!-- Actions & Filter Bar -->
     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
@@ -47,21 +36,12 @@
         <form method="GET" action="{{ route('admin.pieces.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             
             <!-- Search Keyword -->
-            <div class="col-span-1 sm:col-span-2">
+            <div class="col-span-1 sm:col-span-2 lg:col-span-3">
                 <input type="text" 
                        name="search" 
                        value="{{ request('search') }}" 
                        placeholder="Désignation, référence, variante..." 
                        class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-            </div>
-
-            <!-- Filter Status À classer -->
-            <div>
-                <select name="a_classer" class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                    <option value="">Tous les véhicules</option>
-                    <option value="1" {{ request('a_classer') === '1' ? 'selected' : '' }}>⚠️ À classer (sans véhicule)</option>
-                    <option value="0" {{ request('a_classer') === '0' ? 'selected' : '' }}>Classées uniquement</option>
-                </select>
             </div>
 
             <!-- Filter Marque -->
@@ -93,7 +73,7 @@
                 <button type="submit" class="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors">
                     Filtrer
                 </button>
-                @if (request()->hasAny(['search', 'a_classer', 'marque_id', 'famille_id', 'position', 'actif']))
+                @if (request()->hasAny(['search', 'marque_id', 'famille_id', 'position', 'actif']))
                     <a href="{{ route('admin.pieces.index') }}" class="p-2.5 text-xs font-bold text-rose-600 hover:text-rose-800 rounded-xl bg-slate-100 hover:bg-slate-200" title="Réinitialiser">
                         &times;
                     </a>
@@ -118,13 +98,14 @@
                         <th class="p-4">Famille</th>
                         <th class="p-4">Position & Côtés</th>
                         <th class="p-4">Prix TTC</th>
+                        <th class="p-4">Stock</th>
                         <th class="p-4">Statut</th>
                         <th class="p-4 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($pieces as $piece)
-                        <tr class="hover:bg-slate-50/60 transition-colors {{ $piece->isAClasser() ? 'bg-amber-50/30' : '' }}">
+                        <tr class="hover:bg-slate-50/60 transition-colors">
                             
                             <!-- Checkbox -->
                             <td class="p-4 text-center">
@@ -149,14 +130,8 @@
 
                             <!-- Vehicle -->
                             <td class="p-4">
-                                @if ($piece->vehicule)
-                                    <span class="font-bold text-slate-800">{{ $piece->vehicule->marque->nom }}</span>
-                                    <span class="block text-slate-500 text-[11px]">{{ $piece->vehicule->nom }}</span>
-                                @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-amber-500 text-slate-950">
-                                        ⚠️ À classer
-                                    </span>
-                                @endif
+                                <span class="font-bold text-slate-800">{{ $piece->vehicule->marque->nom }}</span>
+                                <span class="block text-slate-500 text-[11px]">{{ $piece->vehicule->nom }}</span>
                             </td>
 
                             <!-- Family -->
@@ -185,6 +160,38 @@
                             <!-- Price -->
                             <td class="p-4 font-black text-slate-900 whitespace-nowrap">
                                 {{ $piece->formatted_prix }}
+                            </td>
+
+                            <!-- Stock -->
+                            <td class="p-4 whitespace-nowrap">
+                                <div class="flex items-center space-x-1.5">
+                                    @if ($piece->stock > 5)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                            {{ $piece->stock }} en stock
+                                        </span>
+                                    @elseif ($piece->stock > 0)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200" title="Stock faible">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                            {{ $piece->stock }} restant(s)
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                            Rupture (0)
+                                        </span>
+                                    @endif
+
+                                    <!-- Quick adjust button -->
+                                    <button type="button" 
+                                            onclick="openStockModal({{ $piece->id }}, '{{ addslashes($piece->designation) }}', {{ (int) $piece->stock }})"
+                                            class="p-1 rounded-md text-slate-400 hover:text-brand-red hover:bg-slate-100 transition-colors cursor-pointer"
+                                            title="Modifier ou réapprovisionner le stock">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
 
                             <!-- Toggle Active Status -->
@@ -219,7 +226,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="p-8 text-center text-slate-400">
+                            <td colspan="10" class="p-8 text-center text-slate-400">
                                 Aucune pièce ne correspond à vos filtres.
                             </td>
                         </tr>
@@ -233,6 +240,65 @@
                 {{ $pieces->links() }}
             </div>
         @endif
+    </div>
+
+    <!-- Stock Adjustment Modal -->
+    <div id="stock-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-black text-slate-900">Gestion & Réapprovisionnement du Stock</h3>
+                    <p id="modal-piece-designation" class="text-xs text-slate-500 font-medium truncate max-w-xs mt-0.5"></p>
+                </div>
+                <button type="button" onclick="closeStockModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="stock-form" method="POST" action="" class="p-5 space-y-4">
+                @csrf
+                @method('PATCH')
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-600 uppercase">Stock actuellement disponible :</span>
+                    <span id="modal-current-stock" class="text-lg font-black text-slate-900">0</span>
+                </div>
+
+                <!-- Définir la valeur absolue -->
+                <div>
+                    <label for="modal_stock_input" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                        Définir la nouvelle quantité en stock
+                    </label>
+                    <input type="number" 
+                           id="modal_stock_input" 
+                           name="stock" 
+                           min="0" 
+                           required
+                           class="w-full text-sm font-bold rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
+                    <span class="text-[11px] text-slate-400 mt-1 block">La quantité est diminuée automatiquement lors des commandes.</span>
+                </div>
+
+                <!-- Réapprovisionnement rapide (+ X unités) -->
+                <div class="pt-2 border-t border-slate-100">
+                    <span class="block text-xs font-bold text-slate-700 uppercase mb-2">Ajouter du stock (+ unités) :</span>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="quickAddStock(5)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+5</button>
+                        <button type="button" onclick="quickAddStock(10)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+10</button>
+                        <button type="button" onclick="quickAddStock(20)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+20</button>
+                        <button type="button" onclick="quickAddStock(50)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+50</button>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-2">
+                    <button type="button" onclick="closeStockModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold cursor-pointer">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-red hover:bg-brand-redHover text-white text-xs font-black shadow-md shadow-brand-red/20 transition-all cursor-pointer">
+                        Mettre à jour le stock
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Floating Action Bar for Selected Pieces -->
@@ -306,6 +372,40 @@
                 ids.forEach(id => url.searchParams.append('piece_ids[]', id));
                 window.open(url.toString(), '_blank');
             });
+        }
+    });
+
+    let currentModalPieceStock = 0;
+
+    function openStockModal(id, designation, stock) {
+        currentModalPieceStock = parseInt(stock) || 0;
+        document.getElementById('modal-piece-designation').textContent = designation;
+        document.getElementById('modal-current-stock').textContent = currentModalPieceStock + ' unité(s)';
+        document.getElementById('modal_stock_input').value = currentModalPieceStock;
+        document.getElementById('stock-form').action = '/admin/pieces/' + id + '/stock';
+        
+        const modal = document.getElementById('stock-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('modal_stock_input').focus();
+    }
+
+    function closeStockModal() {
+        const modal = document.getElementById('stock-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function quickAddStock(amount) {
+        const input = document.getElementById('modal_stock_input');
+        const current = parseInt(input.value) || 0;
+        input.value = current + parseInt(amount);
+    }
+
+    // Fermer avec la touche Echap
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeStockModal();
         }
     });
 </script>

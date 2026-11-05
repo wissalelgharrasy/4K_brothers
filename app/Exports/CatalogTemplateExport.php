@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class CatalogTemplateExport implements FromCollection, WithHeadings, ShouldAutoSize, WithStyles, WithColumnFormatting
+class CatalogTemplateExport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithHeadings, WithStyles
 {
     public function collection(): Collection
     {

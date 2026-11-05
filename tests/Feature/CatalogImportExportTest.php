@@ -8,6 +8,7 @@ use App\Models\Marque;
 use App\Models\Piece;
 use App\Models\User;
 use App\Models\Vehicule;
+use App\Services\CatalogImportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -48,23 +49,21 @@ class CatalogImportExportTest extends TestCase
         $this->pareChocs = Famille::create(['nom' => 'PARE-CHOCS', 'slug' => 'pare-chocs']);
     }
 
-    public function test_guest_cannot_access_import_export_routes(): void
+    public function test_guest_cannot_access_export_routes(): void
     {
-        $this->get('/admin/imports')->assertRedirect('/login');
-        $this->get('/admin/imports/create')->assertRedirect('/login');
         $this->get('/admin/export')->assertRedirect('/login');
-        $this->get('/admin/imports/template')->assertRedirect('/login');
+        $this->get('/admin/export/pdf')->assertRedirect('/login');
+        $this->get('/admin/catalogue/builder')->assertRedirect('/login');
     }
 
-    public function test_admin_can_download_template(): void
+    public function test_admin_import_routes_redirect_to_dashboard(): void
     {
-        $response = $this->actingAs($this->admin)->get('/admin/imports/template');
-
-        $response->assertStatus(200);
-        $this->assertStringContainsString('modele_import_catalogue_4k_brothers.xlsx', $response->headers->get('content-disposition'));
+        $this->actingAs($this->admin)->get('/admin/imports')->assertRedirect('/admin');
+        $this->actingAs($this->admin)->get('/admin/imports/create')->assertRedirect(route('admin.dashboard'));
+        $this->actingAs($this->admin)->get('/admin/exports')->assertRedirect('/admin');
     }
 
-    public function test_admin_can_import_valid_csv(): void
+    public function test_admin_can_import_valid_csv_via_service(): void
     {
         $csvContent = implode("\n", [
             'Marque;Modèle;Famille;Désignation;Position;Année;Prix TTC;Dispo Droite;Dispo Gauche;Variante',
@@ -74,9 +73,7 @@ class CatalogImportExportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('catalogue_test.csv', $csvContent);
 
-        $response = $this->actingAs($this->admin)->post('/admin/imports', [
-            'fichier' => $file,
-        ]);
+        app(CatalogImportService::class)->import($file, $this->admin, 'catalogue_test.csv');
 
         $this->assertDatabaseHas('pieces', [
             'designation' => 'OPTIQUE AV CHROME DUSTER',
@@ -103,9 +100,6 @@ class CatalogImportExportTest extends TestCase
             'nb_erreurs' => 0,
             'statut' => 'termine',
         ]);
-
-        $import = ImportCatalogue::latest()->first();
-        $response->assertRedirect(route('admin.imports.show', $import));
     }
 
     public function test_duplicate_row_updates_price_without_creating_new_record(): void
@@ -133,9 +127,7 @@ class CatalogImportExportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('update_test.csv', $csvContent);
 
-        $this->actingAs($this->admin)->post('/admin/imports', [
-            'fichier' => $file,
-        ]);
+        app(CatalogImportService::class)->import($file, $this->admin, 'update_test.csv');
 
         // Still only 1 record, but updated price and availability
         $this->assertEquals(1, Piece::where('designation', 'OPTIQUE AV CHROME DUSTER')->count());
@@ -163,9 +155,7 @@ class CatalogImportExportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('invalid_rows_test.csv', $csvContent);
 
-        $this->actingAs($this->admin)->post('/admin/imports', [
-            'fichier' => $file,
-        ]);
+        app(CatalogImportService::class)->import($file, $this->admin, 'invalid_rows_test.csv');
 
         $this->assertDatabaseHas('pieces', ['designation' => 'PIECE VALIDE 1']);
         $this->assertDatabaseHas('pieces', ['designation' => 'PIECE VALIDE 2']);
@@ -180,60 +170,23 @@ class CatalogImportExportTest extends TestCase
         $this->assertStringContainsString('Prix TTC invalide', $import->rapport_erreurs_json[1]['motif']);
     }
 
-    public function test_piece_without_recognized_vehicle_is_marked_as_a_classer(): void
+    public function test_piece_without_recognized_vehicle_is_rejected_with_error(): void
     {
         $csvContent = implode("\n", [
             'Marque;Modèle;Famille;Désignation;Position;Année;Prix TTC',
             ';;OPTIQUES;OPTIQUE UNIVERSELLE SANS MODELE;AV;2020;350.00',
         ]);
 
-        $file = UploadedFile::fake()->createWithContent('a_classer.csv', $csvContent);
+        $file = UploadedFile::fake()->createWithContent('sans_vehicule.csv', $csvContent);
 
-        $this->actingAs($this->admin)->post('/admin/imports', [
-            'fichier' => $file,
-        ]);
+        app(CatalogImportService::class)->import($file, $this->admin, 'sans_vehicule.csv');
 
         $piece = Piece::where('designation', 'OPTIQUE UNIVERSELLE SANS MODELE')->first();
-        $this->assertNotNull($piece);
-        $this->assertNull($piece->vehicule_id);
+        $this->assertNull($piece);
 
-        // Matches aClasser scope
-        $this->assertTrue(Piece::aClasser()->where('id', $piece->id)->exists());
-    }
-
-    public function test_admin_can_download_csv_error_report(): void
-    {
-        $import = ImportCatalogue::create([
-            'user_id' => $this->admin->id,
-            'fichier' => 'test_rejet.csv',
-            'date_import' => now(),
-            'nb_lignes' => 2,
-            'nb_crees' => 1,
-            'nb_mis_a_jour' => 0,
-            'nb_erreurs' => 1,
-            'rapport_erreurs_json' => [
-                [
-                    'ligne' => 2,
-                    'designation' => 'Pièce Rejetée',
-                    'motif' => 'Prix TTC manquant',
-                    'donnees' => ['Désignation' => 'Pièce Rejetée'],
-                ],
-            ],
-            'statut' => 'partiel',
-        ]);
-
-        $response = $this->actingAs($this->admin)->get(route('admin.imports.errors-csv', $import));
-
-        $response->assertStatus(200);
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-
-        // Stream content assertion
-        ob_start();
-        $response->sendContent();
-        $content = ob_get_clean();
-
-        $this->assertStringContainsString('Pièce Rejetée', $content);
-        $this->assertStringContainsString('Prix TTC manquant', $content);
+        $import = ImportCatalogue::latest('id')->first();
+        $this->assertEquals(1, $import->nb_erreurs);
+        $this->assertStringContainsString('Véhicule non reconnu', $import->rapport_erreurs_json[0]['motif']);
     }
 
     public function test_admin_can_export_catalogue_with_filters(): void
@@ -291,5 +244,13 @@ class CatalogImportExportTest extends TestCase
         $response->assertSee('PRIX');
         $response->assertSee('OPTIQUE CITROEN BERLINGO 08-');
         $response->assertSee('753,00');
+    }
+
+    public function test_admin_can_access_catalogue_builder(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.catalogue.builder'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Composer un Catalogue PDF Personnalisé');
     }
 }

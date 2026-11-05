@@ -18,7 +18,10 @@ class PieceSeeder extends Seeder
         // Helper to find a vehicule by marque slug and model name
         $getVehicule = function (string $marqueSlug, string $nom) {
             $marque = Marque::where('slug', $marqueSlug)->first();
-            if (!$marque) return null;
+            if (! $marque) {
+                return null;
+            }
+
             return Vehicule::where('marque_id', $marque->id)->where('nom', $nom)->first();
         };
 
@@ -549,9 +552,9 @@ class PieceSeeder extends Seeder
                 'actif' => true,
             ],
 
-            // --- PIÈCES « À CLASSER » (vehicule_id = NULL) ---
+            // --- PIÈCES SUPPLÉMENTAIRES COMPLÉMENTAIRES ---
             [
-                'vehicule_id' => null, // À CLASSER
+                'vehicule_id' => $duster?->id,
                 'famille_id' => $antibrouillard,
                 'designation' => 'PHARE SECOUR UNIVERSEL RENAULT DACIA 13-',
                 'annee_debut' => 2013,
@@ -564,7 +567,7 @@ class PieceSeeder extends Seeder
                 'actif' => true,
             ],
             [
-                'vehicule_id' => null, // À CLASSER
+                'vehicule_id' => $sandero?->id,
                 'famille_id' => $catadioptre,
                 'designation' => 'CATAPHOT AR UNIVERSEL MULTI-MARQUES',
                 'annee_debut' => 2015,
@@ -579,6 +582,7 @@ class PieceSeeder extends Seeder
         ];
 
         foreach ($pieces as $data) {
+            $data['stock'] = $data['stock'] ?? 10;
             Piece::create($data);
         }
     }

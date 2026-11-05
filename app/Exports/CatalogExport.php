@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Models\Piece;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -12,12 +11,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class CatalogExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithColumnFormatting
+class CatalogExport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithHeadings, WithMapping, WithStyles
 {
     public function __construct(
         protected ?int $marqueId = null,
@@ -63,7 +61,7 @@ class CatalogExport implements FromCollection, WithHeadings, WithMapping, Should
     }
 
     /**
-     * @param Piece $piece
+     * @param  Piece  $piece
      */
     public function map($piece): array
     {
@@ -71,7 +69,7 @@ class CatalogExport implements FromCollection, WithHeadings, WithMapping, Should
 
         return [
             $piece->vehicule?->marque?->nom ?? 'N/A',
-            $piece->vehicule?->nom ?? 'À classer',
+            $piece->vehicule?->nom ?? 'N/A',
             $piece->famille?->nom ?? 'DIVERS',
             $piece->designation,
             $piece->position,
@@ -80,7 +78,7 @@ class CatalogExport implements FromCollection, WithHeadings, WithMapping, Should
             $piece->prix_ttc,
             $isRL ? ($piece->dispo_droite ? 'Oui' : 'Non') : '-',
             $isRL ? ($piece->dispo_gauche ? 'Oui' : 'Non') : '-',
-            !$isRL ? ($piece->en_stock ? 'Oui' : 'Non') : '-',
+            ! $isRL ? ($piece->en_stock ? 'Oui' : 'Non') : '-',
             $piece->actif ? 'Actif' : 'Inactif',
         ];
     }

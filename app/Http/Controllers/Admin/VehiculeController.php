@@ -24,7 +24,7 @@ class VehiculeController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('nom', 'like', "%{$search}%")
-                  ->orWhereHas('marque', fn ($m) => $m->where('nom', 'like', "%{$search}%"));
+                    ->orWhereHas('marque', fn ($m) => $m->where('nom', 'like', "%{$search}%"));
             });
         }
 
@@ -37,6 +37,7 @@ class VehiculeController extends Controller
     public function create(): View
     {
         $marques = Marque::orderBy('nom')->get();
+
         return view('admin.vehicules.create', compact('marques'));
     }
 
@@ -66,6 +67,7 @@ class VehiculeController extends Controller
     public function edit(Vehicule $vehicule): View
     {
         $marques = Marque::orderBy('nom')->get();
+
         return view('admin.vehicules.edit', compact('vehicule', 'marques'));
     }
 
@@ -96,7 +98,7 @@ class VehiculeController extends Controller
     {
         $piecesCount = $vehicule->pieces()->count();
 
-        if ($piecesCount > 0 && !$request->boolean('force')) {
+        if ($piecesCount > 0 && ! $request->boolean('force')) {
             return back()->with('error', "Impossible de supprimer le modèle '{$vehicule->nom}' car il contient encore {$piecesCount} pièce(s) liée(s).");
         }
 

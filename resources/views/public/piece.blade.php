@@ -72,10 +72,6 @@
                                class="px-2.5 py-1 rounded-md text-xs font-black bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 transition-colors">
                                 {{ $piece->vehicule->marque->nom }} {{ $piece->vehicule->nom }}
                             </a>
-                        @else
-                            <span class="px-2.5 py-1 rounded-md text-xs font-black bg-amber-50 text-amber-800 border border-amber-200">
-                                Pièce universelle / À classer
-                            </span>
                         @endif
 
                         <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700">
@@ -232,7 +228,7 @@
                         <span class="font-bold text-slate-800">{{ $piece->vehicule?->marque?->nom ?? 'Multimarque' }}</span>
 
                         <span class="text-slate-500 font-medium">Véhicule compatible :</span>
-                        <span class="font-bold text-slate-800">{{ $piece->vehicule?->nom ?? 'À classer' }}</span>
+                        <span class="font-bold text-slate-800">{{ $piece->vehicule?->nom ?? '—' }}</span>
 
                         <span class="text-slate-500 font-medium">Position :</span>
                         <span class="font-bold text-slate-800">{{ $piece->position_label }}</span>

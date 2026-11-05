@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Famille;
 use App\Models\Marque;
 use App\Models\Piece;
+use App\Models\Vehicule;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -22,7 +23,6 @@ class HomeController extends Controller
 
         $featuredPieces = Piece::with(['vehicule.marque', 'famille'])
             ->actif()
-            ->classe()
             ->latest()
             ->take(8)
             ->get();
@@ -30,7 +30,7 @@ class HomeController extends Controller
         $stats = [
             'total_pieces' => Piece::actif()->count(),
             'total_marques' => $marques->count(),
-            'total_vehicules' => \App\Models\Vehicule::count(),
+            'total_vehicules' => Vehicule::count(),
         ];
 
         return view('public.home', compact('marques', 'familles', 'featuredPieces', 'stats'));

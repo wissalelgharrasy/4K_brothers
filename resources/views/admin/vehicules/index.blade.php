@@ -45,7 +45,6 @@
                 <tr>
                     <th class="p-4">Constructeur</th>
                     <th class="p-4">Modèle (Véhicule)</th>
-                    <th class="p-4">Slug URL</th>
                     <th class="p-4">Pièces associées</th>
                     <th class="p-4 text-right">Actions</th>
                 </tr>
@@ -58,9 +57,6 @@
                         </td>
                         <td class="p-4 font-black text-slate-900 text-sm">
                             {{ $vehicule->nom }}
-                        </td>
-                        <td class="p-4 text-slate-500 font-mono text-[11px]">
-                            /{{ $vehicule->marque->slug }}/{{ $vehicule->slug }}
                         </td>
                         <td class="p-4">
                             <a href="{{ route('admin.pieces.index', ['vehicule_id' => $vehicule->id]) }}" class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
@@ -83,7 +79,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-slate-400">
+                        <td colspan="4" class="p-8 text-center text-slate-400">
                             Aucun véhicule trouvé.
                         </td>
                     </tr>

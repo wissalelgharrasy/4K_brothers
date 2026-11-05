@@ -48,14 +48,15 @@
                 <!-- Vehicle searchable select -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
-                        Véhicule compatible
+                        Véhicule compatible <span class="text-brand-red">*</span>
                     </label>
-                    <div class="searchable-select relative" data-target="vehicule_id">
+                    <div class="searchable-select relative" data-target="vehicule_id" data-required="true">
                         <div class="relative">
                             <input type="text"
                                    class="ss-input w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5 pr-9"
                                    placeholder="Rechercher un véhicule..."
-                                   autocomplete="off">
+                                   autocomplete="off"
+                                   required>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
                             </div>
@@ -108,8 +109,8 @@
 
             </div>
 
-            <!-- Year, Position & Price row -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Year, Position, Price & Stock row -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 
                 <!-- Année début -->
                 <div>
@@ -158,11 +159,29 @@
                            class="w-full text-xs font-black text-brand-red rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
                 </div>
 
+                <!-- Quantité en Stock -->
+                <div>
+                    <label for="stock" class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                        Quantité en stock <span class="text-brand-red">*</span>
+                    </label>
+                    <input type="number" 
+                           id="stock" 
+                           name="stock" 
+                           value="{{ old('stock', 10) }}" 
+                           min="0" 
+                           required 
+                           placeholder="Ex. 10"
+                           class="w-full text-xs font-bold text-slate-900 rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
+                </div>
+
             </div>
 
             <!-- Availability Settings Dynamic Block -->
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <span class="block text-xs font-black uppercase text-slate-700 mb-3">Disponibilité du Stock</span>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="block text-xs font-black uppercase text-slate-700">Disponibilité du Stock</span>
+                    <span class="text-[11px] text-slate-500 italic">Le stock diminue automatiquement lors de chaque commande</span>
+                </div>
 
                 <!-- For RL Position -->
                 <div id="rl-fields" class="grid grid-cols-2 gap-4">

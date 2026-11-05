@@ -40,7 +40,7 @@ class CartController extends Controller
             return response()->json($result, $result['success'] ? 200 : 422);
         }
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return back()->with('error', $result['message']);
         }
 
@@ -84,6 +84,7 @@ class CartController extends Controller
     public function clear(CartService $cartService): RedirectResponse
     {
         $cartService->clear();
+
         return redirect()->route('cart.index')->with('success', 'Votre panier a été vidé.');
     }
 }

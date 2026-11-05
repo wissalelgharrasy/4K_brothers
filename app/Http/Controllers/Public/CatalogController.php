@@ -13,6 +13,30 @@ use Illuminate\View\View;
 class CatalogController extends Controller
 {
     /**
+     * Page liste de toutes les marques.
+     */
+    public function marques(): View
+    {
+        $marques = Marque::with(['vehicules' => function ($q) {
+            $q->withCount(['pieces' => fn ($p) => $p->actif()]);
+        }])
+            ->withCount([
+                'vehicules',
+                'pieces' => fn ($q) => $q->actif(),
+            ])
+            ->orderBy('nom')
+            ->get();
+
+        $stats = [
+            'total_marques' => $marques->count(),
+            'total_vehicules' => $marques->sum('vehicules_count'),
+            'total_pieces' => $marques->sum('pieces_count'),
+        ];
+
+        return view('public.marques', compact('marques', 'stats'));
+    }
+
+    /**
      * Page marque : liste des véhicules de la marque.
      */
     public function marque(string $slug): View
@@ -103,7 +127,7 @@ class CatalogController extends Controller
     {
         $piece = Piece::with(['famille', 'vehicule.marque'])->findOrFail($id);
 
-        if (!$piece->actif && !auth()->check()) {
+        if (! $piece->actif && ! auth()->check()) {
             abort(404, 'Pièce non trouvée ou inactive');
         }
 
@@ -143,9 +167,9 @@ class CatalogController extends Controller
             ->actif()
             ->where(function ($query) use ($q) {
                 $query->where('designation', 'like', "%{$q}%")
-                      ->orWhere('variante', 'like', "%{$q}%")
-                      ->orWhereHas('famille', fn ($f) => $f->where('nom', 'like', "%{$q}%"))
-                      ->orWhereHas('vehicule', fn ($v) => $v->where('nom', 'like', "%{$q}%"));
+                    ->orWhere('variante', 'like', "%{$q}%")
+                    ->orWhereHas('famille', fn ($f) => $f->where('nom', 'like', "%{$q}%"))
+                    ->orWhereHas('vehicule', fn ($v) => $v->where('nom', 'like', "%{$q}%"));
             })
             ->orderBy('designation')
             ->get();
@@ -153,9 +177,10 @@ class CatalogController extends Controller
         // Group results by vehicle
         $grouped = $pieces->groupBy(function ($piece) {
             if ($piece->vehicule) {
-                return $piece->vehicule->marque->nom . ' ' . $piece->vehicule->nom;
+                return $piece->vehicule->marque->nom.' '.$piece->vehicule->nom;
             }
-            return 'Pièces universelles / À classer';
+
+            return 'Autres pièces';
         });
 
         return view('public.search', [

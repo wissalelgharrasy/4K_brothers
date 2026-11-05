@@ -22,16 +22,8 @@ class PieceController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('designation', 'like', "%{$search}%")
-                  ->orWhere('variante', 'like', "%{$search}%");
+                    ->orWhere('variante', 'like', "%{$search}%");
             });
-        }
-
-        if ($request->filled('a_classer')) {
-            if ($request->input('a_classer') === '1') {
-                $query->whereNull('vehicule_id');
-            } elseif ($request->input('a_classer') === '0') {
-                $query->whereNotNull('vehicule_id');
-            }
         }
 
         if ($familleId = $request->input('famille_id')) {
@@ -60,9 +52,7 @@ class PieceController extends Controller
         $familles = Famille::orderBy('nom')->get();
         $vehicules = Vehicule::orderBy('nom')->get();
 
-        $aClasserCount = Piece::aClasser()->count();
-
-        return view('admin.pieces.index', compact('pieces', 'marques', 'familles', 'vehicules', 'aClasserCount'));
+        return view('admin.pieces.index', compact('pieces', 'marques', 'familles', 'vehicules'));
     }
 
     public function create(): View
@@ -80,11 +70,12 @@ class PieceController extends Controller
         $validated = $request->validate([
             'designation' => 'required|string|max:255',
             'famille_id' => 'required|exists:familles,id',
-            'vehicule_id' => 'nullable|exists:vehicules,id',
+            'vehicule_id' => 'required|exists:vehicules,id',
             'annee_debut' => "required|integer|between:1990,{$maxYear}",
             'position' => 'required|in:AV,AR,CTRL,RL',
             'variante' => 'nullable|string|max:150',
             'prix_ttc' => 'required|numeric|min:0.01',
+            'stock' => 'nullable|integer|min:0',
             'dispo_droite' => 'nullable|boolean',
             'dispo_gauche' => 'nullable|boolean',
             'en_stock' => 'nullable|boolean',
@@ -98,18 +89,21 @@ class PieceController extends Controller
         }
 
         $isRL = $validated['position'] === 'RL';
+        $stock = isset($validated['stock']) ? (int) $validated['stock'] : 10;
+        $isStockPositive = $stock > 0;
 
         Piece::create([
             'designation' => $validated['designation'],
             'famille_id' => $validated['famille_id'],
-            'vehicule_id' => $validated['vehicule_id'] ?? null,
+            'vehicule_id' => $validated['vehicule_id'],
             'annee_debut' => $validated['annee_debut'],
             'position' => $validated['position'],
             'variante' => $validated['variante'] ?? null,
             'prix_ttc' => $validated['prix_ttc'],
-            'dispo_droite' => $isRL ? $request->boolean('dispo_droite') : null,
-            'dispo_gauche' => $isRL ? $request->boolean('dispo_gauche') : null,
-            'en_stock' => !$isRL ? $request->boolean('en_stock', true) : null,
+            'stock' => $stock,
+            'dispo_droite' => $isRL ? ($isStockPositive && $request->boolean('dispo_droite', true)) : null,
+            'dispo_gauche' => $isRL ? ($isStockPositive && $request->boolean('dispo_gauche', true)) : null,
+            'en_stock' => ! $isRL ? ($isStockPositive && $request->boolean('en_stock', true)) : null,
             'image' => $imagePath,
             'actif' => $request->boolean('actif', true),
         ]);
@@ -132,11 +126,12 @@ class PieceController extends Controller
         $validated = $request->validate([
             'designation' => 'required|string|max:255',
             'famille_id' => 'required|exists:familles,id',
-            'vehicule_id' => 'nullable|exists:vehicules,id',
+            'vehicule_id' => 'required|exists:vehicules,id',
             'annee_debut' => "required|integer|between:1990,{$maxYear}",
             'position' => 'required|in:AV,AR,CTRL,RL',
             'variante' => 'nullable|string|max:150',
             'prix_ttc' => 'required|numeric|min:0.01',
+            'stock' => 'nullable|integer|min:0',
             'dispo_droite' => 'nullable|boolean',
             'dispo_gauche' => 'nullable|boolean',
             'en_stock' => 'nullable|boolean',
@@ -152,6 +147,8 @@ class PieceController extends Controller
         }
 
         $isRL = $validated['position'] === 'RL';
+        $stock = isset($validated['stock']) ? (int) $validated['stock'] : $piece->stock;
+        $isStockPositive = $stock > 0;
 
         $piece->designation = $validated['designation'];
         $piece->famille_id = $validated['famille_id'];
@@ -160,9 +157,10 @@ class PieceController extends Controller
         $piece->position = $validated['position'];
         $piece->variante = $validated['variante'] ?? null;
         $piece->prix_ttc = $validated['prix_ttc'];
-        $piece->dispo_droite = $isRL ? $request->boolean('dispo_droite') : null;
-        $piece->dispo_gauche = $isRL ? $request->boolean('dispo_gauche') : null;
-        $piece->en_stock = !$isRL ? $request->boolean('en_stock', true) : null;
+        $piece->stock = $stock;
+        $piece->dispo_droite = $isRL ? ($isStockPositive && $request->boolean('dispo_droite', true)) : null;
+        $piece->dispo_gauche = $isRL ? ($isStockPositive && $request->boolean('dispo_gauche', true)) : null;
+        $piece->en_stock = ! $isRL ? ($isStockPositive && $request->boolean('en_stock', true)) : null;
         $piece->actif = $request->boolean('actif', true);
         $piece->save();
 
@@ -185,7 +183,7 @@ class PieceController extends Controller
      */
     public function toggleActive(Piece $piece): RedirectResponse|JsonResponse
     {
-        $piece->actif = !$piece->actif;
+        $piece->actif = ! $piece->actif;
         $piece->save();
 
         if (request()->wantsJson() || request()->ajax()) {
@@ -197,5 +195,38 @@ class PieceController extends Controller
         }
 
         return back()->with('success', $piece->actif ? "La pièce '{$piece->designation}' est maintenant active." : "La pièce '{$piece->designation}' a été désactivée.");
+    }
+
+    /**
+     * Modifier ou ajouter du stock à une pièce (réapprovisionnement rapide).
+     */
+    public function updateStock(Request $request, Piece $piece): RedirectResponse|JsonResponse
+    {
+        $validated = $request->validate([
+            'stock' => 'nullable|integer|min:0',
+            'ajout_stock' => 'nullable|integer|min:1',
+        ]);
+
+        if ($request->filled('ajout_stock')) {
+            $ajout = (int) $validated['ajout_stock'];
+            $piece->addStock($ajout);
+            $msg = "+{$ajout} unité(s) ajoutée(s) au stock de '{$piece->designation}'. Nouveau stock : {$piece->stock}.";
+        } else {
+            $stock = (int) ($validated['stock'] ?? 0);
+            $piece->setStock($stock);
+            $msg = "Stock de '{$piece->designation}' mis à jour : {$piece->stock} unité(s).";
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'stock' => $piece->stock,
+                'en_stock' => $piece->en_stock,
+                'is_disponible' => $piece->isDisponible(),
+                'message' => $msg,
+            ]);
+        }
+
+        return back()->with('success', $msg);
     }
 }

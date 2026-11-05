@@ -7,9 +7,7 @@ class WhatsAppOrderService
     /**
      * Generate the WhatsApp message text and wa.me redirect link.
      *
-     * @param array $cartItems
-     * @param float $total
-     * @param array $customerData ['nom', 'telephone', 'adresse', 'note']
+     * @param  array  $customerData  ['nom', 'telephone', 'adresse', 'note']
      * @return array ['message' => string, 'url' => string]
      */
     public function generateOrderLink(array $cartItems, float $total, array $customerData): array
@@ -20,7 +18,7 @@ class WhatsAppOrderService
 
         $lines = [];
         $lines[] = "Bonjour *{$shopName}*, je souhaite commander :";
-        $lines[] = "";
+        $lines[] = '';
 
         $i = 1;
         $maxItemsToDetail = 20; // Guard against URL length overflow
@@ -34,19 +32,19 @@ class WhatsAppOrderService
             }
 
             $coteTxt = '';
-            if (!empty($item['cote_label']) && $item['cote_label'] !== 'Standard') {
+            if (! empty($item['cote_label']) && $item['cote_label'] !== 'Standard') {
                 $coteTxt = " — {$item['cote_label']}";
             }
 
-            $formattedLignePrix = number_format((float) $item['total_ligne'], 2, ',', ' ') . ' ' . $currency;
+            $formattedLignePrix = number_format((float) $item['total_ligne'], 2, ',', ' ').' '.$currency;
             $lines[] = "{$i}. {$item['designation']}{$coteTxt} — x{$item['quantite']} — {$formattedLignePrix}";
             $i++;
         }
 
-        $lines[] = "";
-        $formattedTotal = number_format($total, 2, ',', ' ') . ' ' . $currency;
+        $lines[] = '';
+        $formattedTotal = number_format($total, 2, ',', ' ').' '.$currency;
         $lines[] = "*Total : {$formattedTotal}*";
-        $lines[] = "";
+        $lines[] = '';
 
         $nom = trim((string) ($customerData['nom'] ?? ''));
         $tel = trim((string) ($customerData['telephone'] ?? ''));
@@ -55,10 +53,10 @@ class WhatsAppOrderService
 
         $lines[] = "Nom : {$nom}";
         $lines[] = "Téléphone : {$tel}";
-        if (!empty($adresse)) {
+        if (! empty($adresse)) {
             $lines[] = "Adresse / Ville : {$adresse}";
         }
-        if (!empty($note)) {
+        if (! empty($note)) {
             $lines[] = "Note : {$note}";
         }
 

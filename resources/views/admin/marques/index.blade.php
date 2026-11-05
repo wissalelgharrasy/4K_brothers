@@ -32,7 +32,6 @@
                 <tr>
                     <th class="p-4">Logo</th>
                     <th class="p-4">Nom</th>
-                    <th class="p-4">Slug URL</th>
                     <th class="p-4">Modèles</th>
                     <th class="p-4">Pièces associées</th>
                     <th class="p-4 text-right">Actions</th>
@@ -52,9 +51,6 @@
                         </td>
                         <td class="p-4 font-black text-slate-900 text-sm">
                             {{ $marque->nom }}
-                        </td>
-                        <td class="p-4 text-slate-500 font-mono text-[11px]">
-                            /{{ $marque->slug }}
                         </td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700">
@@ -82,7 +78,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-slate-400">
+                        <td colspan="5" class="p-8 text-center text-slate-400">
                             Aucune marque trouvée.
                         </td>
                     </tr>

@@ -71,7 +71,7 @@ class FamilleController extends Controller
     {
         $piecesCount = $famille->pieces()->count();
 
-        if ($piecesCount > 0 && !$request->boolean('force')) {
+        if ($piecesCount > 0 && ! $request->boolean('force')) {
             return back()->with('error', "Impossible de supprimer la famille '{$famille->nom}' car elle contient encore {$piecesCount} pièce(s) associée(s).");
         }
 

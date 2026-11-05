@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pieces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicule_id')->nullable()->constrained('vehicules')->nullOnDelete();
+            $table->foreignId('vehicule_id')->constrained('vehicules')->cascadeOnDelete();
             $table->foreignId('famille_id')->constrained('familles')->cascadeOnDelete();
             $table->string('designation');
             $table->unsignedSmallInteger('annee_debut');

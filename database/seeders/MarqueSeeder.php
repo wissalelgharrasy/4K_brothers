@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Marque;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class MarqueSeeder extends Seeder
 {
