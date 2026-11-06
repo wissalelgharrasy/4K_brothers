@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commande;
 use App\Models\Famille;
 use App\Models\Marque;
 use App\Models\Piece;
@@ -205,5 +206,65 @@ class PieceStockTest extends TestCase
 
         $response2->assertRedirect();
         $this->assertEquals(55, $piece->fresh()->stock);
+    }
+
+    public function test_canceling_order_restores_stock_and_reactivating_deducts_stock(): void
+    {
+        $piece = Piece::create([
+            'vehicule_id' => $this->vehicule->id,
+            'famille_id' => $this->famille->id,
+            'designation' => 'FEU ARRIERE TEST ANNULATION',
+            'annee_debut' => 2021,
+            'position' => 'AR',
+            'prix_ttc' => 300.00,
+            'stock' => 10,
+            'en_stock' => true,
+            'actif' => true,
+        ]);
+
+        // Créer une commande de 4 unités
+        $commande = Commande::create([
+            'reference' => Commande::generateReference(),
+            'nom' => 'Client Test',
+            'telephone' => '0611223344',
+            'adresse' => 'Casablanca',
+            'items' => [
+                [
+                    'piece_id' => $piece->id,
+                    'designation' => $piece->designation,
+                    'quantite' => 4,
+                    'coefficient_cote' => 1,
+                    'total_ligne' => 1200.00,
+                ],
+            ],
+            'total' => 1200.00,
+            'statut' => 'nouvelle',
+        ]);
+
+        // Déduire le stock comme lors du checkout (10 - 4 = 6)
+        $commande->deduireStock();
+        $this->assertEquals(6, $piece->fresh()->stock);
+
+        // 1. Annulation de la commande : le stock doit revenir (6 + 4 = 10)
+        $this->actingAs($this->admin)->patch(route('admin.commandes.statut', $commande), [
+            'statut' => 'annulée',
+        ])->assertRedirect();
+
+        $this->assertEquals('annulée', $commande->fresh()->statut);
+        $this->assertEquals(10, $piece->fresh()->stock);
+
+        // 2. Réactivation de la commande (ex: confirmée) : le stock doit être à nouveau retiré (10 - 4 = 6)
+        $this->actingAs($this->admin)->patch(route('admin.commandes.statut', $commande), [
+            'statut' => 'confirmée',
+        ])->assertRedirect();
+
+        $this->assertEquals('confirmée', $commande->fresh()->statut);
+        $this->assertEquals(6, $piece->fresh()->stock);
+
+        // 3. Suppression de la commande : le stock doit être restitué (6 + 4 = 10)
+        $this->actingAs($this->admin)->delete(route('admin.commandes.destroy', $commande))
+            ->assertRedirect(route('admin.commandes.index'));
+
+        $this->assertEquals(10, $piece->fresh()->stock);
     }
 }

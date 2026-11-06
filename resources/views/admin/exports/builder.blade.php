@@ -11,18 +11,15 @@
         <input type="hidden" name="download" value="1">
 
         <!-- Top Header Card: Title & Notes -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                    <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h2 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        1. Informations de l'en-tête du catalogue
+                        En-tête du catalogue
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                        Personnalisez le titre principal et les mentions qui apparaîtront en haut de votre document PDF.
-                    </p>
                 </div>
                 <button type="submit" 
                         id="btn-top-generate-pdf"
@@ -43,9 +40,8 @@
                     <input type="text" 
                            id="custom_title" 
                            name="custom_title" 
-                           placeholder="Ex. CATALOGUE PIÈCES BERLINGO, OFFRE SPÉCIALE MARS..." 
+                           placeholder="Ex. CATALOGUE PIÈCES..." 
                            class="w-full text-xs font-semibold rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                    <span class="text-[11px] text-slate-400 mt-1 block">Laisser vide pour afficher uniquement le tableau.</span>
                 </div>
 
                 <div>
@@ -55,9 +51,8 @@
                     <input type="text" 
                            id="custom_note" 
                            name="custom_note" 
-                           placeholder="Ex. Contact : 06 XX XX XX XX • Offre valable jusqu'au 31/12" 
+                           placeholder="Ex. Contact : 06 XX XX XX XX..." 
                            class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                    <span class="text-[11px] text-slate-400 mt-1 block">Mention affichée sous le titre du catalogue.</span>
                 </div>
             </div>
         </div>
@@ -69,21 +64,18 @@
             <div class="p-5 border-b border-slate-100 space-y-4 bg-slate-50/50">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
-                            2. Sélectionnez les pièces à inclure
+                            Sélection des pièces
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Cochez les pièces que vous voulez mettre dans ce catalogue spécifique.
-                        </p>
                     </div>
 
                     <!-- Quick buttons -->
                     <div class="flex items-center gap-2">
                         <button type="button" id="btn-toggle-selected-only" class="px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 cursor-pointer shadow-sm">
-                            🎯 Voir ma sélection (<span id="only-selected-badge">0</span>)
+                            Sélectionnées (<span id="only-selected-badge">0</span>)
                         </button>
                         <button type="button" id="btn-select-all-visible" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 cursor-pointer shadow-sm">
                             Tout cocher
@@ -203,8 +195,7 @@
             </div>
 
             <div class="p-3 bg-slate-50 border-t border-slate-100 text-xs text-slate-500 flex justify-between items-center">
-                <span id="visible-count-label">{{ $pieces->count() }} pièces visibles</span>
-                <span class="text-slate-400 text-[11px]">Cochez les pièces souhaitées puis cliquez sur le bouton rouge ci-dessous.</span>
+                <span id="visible-count-label" class="font-bold">{{ $pieces->count() }} pièces</span>
             </div>
 
         </div>

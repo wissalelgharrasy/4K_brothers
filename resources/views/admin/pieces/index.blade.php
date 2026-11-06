@@ -267,7 +267,7 @@
                 <!-- Définir la valeur absolue -->
                 <div>
                     <label for="modal_stock_input" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                        Définir la nouvelle quantité en stock
+                        Quantité en stock
                     </label>
                     <input type="number" 
                            id="modal_stock_input" 
@@ -275,12 +275,11 @@
                            min="0" 
                            required
                            class="w-full text-sm font-bold rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30 py-2.5">
-                    <span class="text-[11px] text-slate-400 mt-1 block">La quantité est diminuée automatiquement lors des commandes.</span>
                 </div>
 
                 <!-- Réapprovisionnement rapide (+ X unités) -->
                 <div class="pt-2 border-t border-slate-100">
-                    <span class="block text-xs font-bold text-slate-700 uppercase mb-2">Ajouter du stock (+ unités) :</span>
+                    <span class="block text-xs font-bold text-slate-700 uppercase mb-2">Ajouter du stock :</span>
                     <div class="flex gap-2">
                         <button type="button" onclick="quickAddStock(5)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+5</button>
                         <button type="button" onclick="quickAddStock(10)" class="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-red hover:text-white hover:border-brand-red transition-colors cursor-pointer">+10</button>

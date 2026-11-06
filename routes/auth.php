@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -24,17 +23,26 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
+    // Step 1 — Enter email → receive OTP code by email
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+    // Step 2 — Enter the 6-digit code
+    Route::get('verify-reset-code', [PasswordResetLinkController::class, 'codeForm'])
+        ->name('password.code.form');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+    Route::post('verify-reset-code', [PasswordResetLinkController::class, 'verifyCode'])
+        ->name('password.code.verify');
+
+    // Step 3 — Choose a new password
+    Route::get('new-password', [PasswordResetLinkController::class, 'newPasswordForm'])
+        ->name('password.new.form');
+
+    Route::post('new-password', [PasswordResetLinkController::class, 'saveNewPassword'])
+        ->name('password.new.save');
 });
 
 Route::middleware('auth')->group(function () {

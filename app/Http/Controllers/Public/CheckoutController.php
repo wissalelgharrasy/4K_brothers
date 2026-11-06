@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
-use App\Models\Piece;
 use App\Services\CartService;
 use App\Services\WhatsAppOrderService;
 use Illuminate\Http\RedirectResponse;
@@ -45,22 +44,10 @@ class CheckoutController extends Controller
             'note' => 'nullable|string|max:500',
         ]);
 
-        // Décrémentation automatique du stock pour chaque pièce commandée
-        foreach ($items as $item) {
-            if (! empty($item['piece_id'])) {
-                $piece = Piece::find($item['piece_id']);
-                if ($piece) {
-                    $coeff = (int) ($item['coefficient_cote'] ?? 1);
-                    $qtyToDeduct = (int) ($item['quantite'] ?? 1) * max(1, $coeff);
-                    $piece->decrementStock($qtyToDeduct);
-                }
-            }
-        }
-
         $total = $cartService->total();
 
         // Sauvegarder la commande en base de données
-        Commande::create([
+        $commande = Commande::create([
             'reference' => Commande::generateReference(),
             'nom' => $validated['nom'],
             'telephone' => $validated['telephone'],
@@ -70,6 +57,9 @@ class CheckoutController extends Controller
             'total' => $total,
             'statut' => 'nouvelle',
         ]);
+
+        // Décrémentation automatique du stock pour chaque pièce commandée
+        $commande->deduireStock();
 
         $orderData = $whatsAppService->generateOrderLink(
             $items,

@@ -13,6 +13,19 @@
 
     <!-- Scripts via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Masquer complètement la barre de défilement (scrollbar) du menu latéral -->
+    <style>
+        aside, aside *, nav, nav * {
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* IE et Edge */
+        }
+        aside::-webkit-scrollbar, aside *::-webkit-scrollbar, nav::-webkit-scrollbar, nav *::-webkit-scrollbar {
+            display: none !important; /* Chrome, Safari, Opera, Chromium Edge */
+            width: 0px !important;
+            height: 0px !important;
+        }
+    </style>
 </head>
 <body class="h-full font-sans antialiased text-slate-800 flex flex-col md:flex-row">
 
@@ -30,7 +43,7 @@
         </div>
 
         <!-- Sidebar Navigation Menu -->
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
             
             <!-- Dashboard -->
             <a href="{{ route('admin.dashboard') }}" 

@@ -17,30 +17,6 @@
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-brand-red selection:text-white">
 
-    <!-- Top Bar Contact Info -->
-    <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center text-emerald-400 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
-                    Catalogue en ligne disponible
-                </span>
-                <span class="hidden sm:inline text-slate-600">|</span>
-                <span class="hidden sm:inline text-slate-400">Vente de pièces carrosserie & éclairage</span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}" 
-                   target="_blank" 
-                   rel="noopener"
-                   class="inline-flex items-center text-slate-300 hover:text-emerald-400 font-semibold transition-colors">
-                    <svg class="w-3.5 h-3.5 mr-1 text-emerald-500 fill-current" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
-                    </svg>
-                    WhatsApp : {{ config('shop.whatsapp_number', '212600000000') }}
-                </a>
-            </div>
-        </div>
-    </div>
 
     <!-- Main Header -->
     <header class="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 shadow-lg">

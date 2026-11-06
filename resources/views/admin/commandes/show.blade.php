@@ -24,9 +24,26 @@
                 <h2 class="text-sm font-black text-slate-900">{{ $commande->reference }}</h2>
                 <p class="text-xs text-slate-400 mt-0.5">{{ $commande->created_at->format('d/m/Y à H:i') }}</p>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-bold {{ $commande->statut_badge }}">
-                {{ ucfirst($commande->statut) }}
-            </span>
+            <div class="flex items-center gap-2">
+                @if ($commande->statut === 'annulée')
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                        <svg class="w-3 h-3 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Stock restitué
+                    </span>
+                @else
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <svg class="w-3 h-3 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Stock déduit
+                    </span>
+                @endif
+                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $commande->statut_badge }}">
+                    {{ ucfirst($commande->statut) }}
+                </span>
+            </div>
         </div>
 
         <!-- Infos client -->
@@ -73,19 +90,21 @@
             </a>
 
             <!-- Changer le statut -->
-            <form method="POST" action="{{ route('admin.commandes.statut', $commande) }}" class="flex items-center gap-2">
+            <form method="POST" action="{{ route('admin.commandes.statut', $commande) }}" class="flex flex-col sm:flex-row sm:items-center gap-2">
                 @csrf
                 @method('PATCH')
-                <select name="statut" class="text-xs font-bold border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:outline-none focus:border-slate-400">
-                    @foreach (['nouvelle', 'contacté', 'confirmée', 'annulée'] as $statut)
-                        <option value="{{ $statut }}" {{ $commande->statut === $statut ? 'selected' : '' }}>
-                            {{ ucfirst($statut) }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors">
-                    Mettre à jour
-                </button>
+                <div class="flex items-center gap-2">
+                    <select name="statut" class="text-xs font-bold border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:outline-none focus:border-slate-400">
+                        @foreach (['nouvelle', 'contacté', 'confirmée', 'annulée'] as $statut)
+                            <option value="{{ $statut }}" {{ $commande->statut === $statut ? 'selected' : '' }}>
+                                {{ ucfirst($statut) }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors">
+                        Mettre à jour
+                    </button>
+                </div>
             </form>
         </div>
     </div>

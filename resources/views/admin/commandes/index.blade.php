@@ -8,10 +8,7 @@
 
     <!-- Header -->
     <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-sm font-black text-slate-900">Commandes reçues</h1>
-            <p class="text-xs text-slate-400 mt-0.5">Chaque commande passée depuis le site public</p>
-        </div>
+        <h1 class="text-sm font-black text-slate-900">Commandes</h1>
         <span class="text-xs font-bold text-slate-500">{{ $commandes->total() }} commande(s)</span>
     </div>
 

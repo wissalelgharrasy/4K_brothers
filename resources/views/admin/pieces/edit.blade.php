@@ -178,9 +178,8 @@
 
             <!-- Availability Settings Dynamic Block -->
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div class="flex items-center justify-between mb-3">
+                <div class="mb-3">
                     <span class="block text-xs font-black uppercase text-slate-700">Disponibilité du Stock</span>
-                    <span class="text-[11px] text-slate-500 italic">Le stock diminue automatiquement lors de chaque commande</span>
                 </div>
 
                 <!-- For RL Position -->
