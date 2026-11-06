@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CommandeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FamilleController;
 use App\Http\Controllers\Admin\ImportExportController;
@@ -84,6 +85,10 @@ Route::middleware('auth')->group(function () {
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::put('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // Commandes clients
+        Route::resource('commandes', CommandeController::class)->only(['index', 'show', 'destroy']);
+        Route::patch('commandes/{commande}/statut', [CommandeController::class, 'updateStatut'])->name('commandes.statut');
     });
 });
 

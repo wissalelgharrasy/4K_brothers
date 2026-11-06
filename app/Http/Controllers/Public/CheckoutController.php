@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Commande;
 use App\Models\Piece;
 use App\Services\CartService;
 use App\Services\WhatsAppOrderService;
@@ -56,16 +57,30 @@ class CheckoutController extends Controller
             }
         }
 
+        $total = $cartService->total();
+
+        // Sauvegarder la commande en base de données
+        Commande::create([
+            'reference' => Commande::generateReference(),
+            'nom' => $validated['nom'],
+            'telephone' => $validated['telephone'],
+            'adresse' => $validated['adresse'],
+            'note' => $validated['note'] ?? null,
+            'items' => array_values($items),
+            'total' => $total,
+            'statut' => 'nouvelle',
+        ]);
+
         $orderData = $whatsAppService->generateOrderLink(
             $items,
-            $cartService->total(),
+            $total,
             $validated
         );
 
         // Vider le panier après validation
         $cartService->clear();
 
-        // Rediriger vers WhatsApp
+        // Rediriger vers WhatsApp (le client envoie le message lui-même)
         return redirect()->away($orderData['url']);
     }
 }

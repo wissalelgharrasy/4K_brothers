@@ -121,17 +121,6 @@
                         </select>
                     </div>
 
-                    <!-- Sort -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Trier par</label>
-                        <select name="sort" class="w-full text-xs rounded-xl border-slate-300 focus:border-brand-red focus:ring-brand-red/30">
-                            <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Nom (A à Z)</option>
-                            <option value="prix_asc" {{ request('sort') == 'prix_asc' ? 'selected' : '' }}>Prix croissant</option>
-                            <option value="prix_desc" {{ request('sort') == 'prix_desc' ? 'selected' : '' }}>Prix décroissant</option>
-                            <option value="nom_desc" {{ request('sort') == 'nom_desc' ? 'selected' : '' }}>Nom (Z à A)</option>
-                        </select>
-                    </div>
-
                     <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-brand-red text-white text-xs font-black tracking-wider uppercase transition-colors shadow-sm">
                         Appliquer les filtres
                     </button>

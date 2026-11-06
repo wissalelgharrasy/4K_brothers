@@ -78,6 +78,21 @@
                 Familles de pièces
             </a>
 
+            <!-- Commandes -->
+            <a href="{{ route('admin.commandes.index') }}" 
+               class="flex items-center px-4 py-3 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.commandes.*') ? 'bg-brand-red text-white shadow-lg shadow-brand-red/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Commandes
+                @php $nbNouvelles = \App\Models\Commande::where('statut', 'nouvelle')->count(); @endphp
+                @if ($nbNouvelles > 0)
+                    <span class="ml-auto px-2 py-0.5 rounded-full bg-brand-red text-white text-[10px] font-black {{ request()->routeIs('admin.commandes.*') ? 'bg-white text-brand-red' : '' }}">
+                        {{ $nbNouvelles }}
+                    </span>
+                @endif
+            </a>
+
             <!-- Créateur Catalogue PDF -->
             <a href="{{ route('admin.catalogue.builder') }}" 
                class="flex items-center px-4 py-3 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.catalogue.builder') ? 'bg-brand-red text-white shadow-lg shadow-brand-red/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">

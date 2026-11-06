@@ -3,93 +3,82 @@
 @section('title', '4K BROTHERS — Pièces Auto Dacia, Renault & Carrosserie au Maroc')
 
 @section('content')
-    <!-- Hero Banner with Automotive Vibe -->
-    <section class="relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden py-12 sm:py-16 lg:py-20 border-b border-slate-800">
-        <!-- Background Glow Accents -->
-        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-red/25 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute top-1/2 right-10 w-[450px] h-[450px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div class="absolute -bottom-24 right-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                
-                <!-- Left Column: Title & Proposition -->
-                <div class="lg:col-span-6 xl:col-span-5 space-y-6">
-                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-500 text-xs font-bold uppercase tracking-wider">
-                        <span class="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
-                        <span>4K BROTHERS — Votre Partenaire Auto</span>
-                    </div>
-                    
-                    <h1 class="text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight leading-tight">
-                        Pièces de <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-rose-500 to-red-400">Carrosserie & Éclairage</span> Automobiles.
-                    </h1>
-                    
-                    <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
-                        Optiques, pare-chocs, calandres, feux arrière, grilles et spoilers pour <strong>Dacia, Renault</strong> et véhicules multimarques. Trouvez votre référence certifiée et commandez instantanément sur WhatsApp.
-                    </p>
+    <!-- Hero Banner — Full bleed, photo background right, curved bottom -->
+    <section class="relative bg-slate-950 text-white" style="padding-bottom: 60px;">
 
-                    <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3 pt-2">
-                        <a href="{{ route('catalog.marques') }}" 
-                           class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-red to-red-600 hover:from-red-600 hover:to-red-700 text-white font-black text-sm shadow-lg shadow-brand-red/30 hover:shadow-brand-red/50 transition-all transform hover:-translate-y-0.5">
-                            <span>Parcourir le Catalogue</span>
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
-                        </a>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}?text={{ urlencode('Bonjour 4K Brothers, je cherche des pièces de carrosserie ou d\'éclairage pour mon véhicule.') }}"
-                           target="_blank" 
-                           rel="noopener"
-                           class="inline-flex items-center justify-center px-5 py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 text-slate-200 hover:text-white font-bold text-sm transition-all backdrop-blur-sm">
-                            <svg class="w-4 h-4 mr-2 text-emerald-400 fill-current" viewBox="0 0 24 24">
-                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
-                            </svg>
-                            <span>Demande Directe</span>
-                        </a>
-                    </div>
+        {{-- Full bleed layout: image on right bleeds into dark bg --}}
+        <div class="absolute inset-0 flex">
+            {{-- Left dark zone (45%) --}}
+            <div class="w-full lg:w-[45%] bg-slate-950 flex-shrink-0"></div>
+            {{-- Right image zone (55%) --}}
+            <div class="hidden lg:block flex-1 relative">
+                <img src="{{ asset('images/hero-kardian-optiques.webp') }}"
+                     alt="Pièces automobiles 4K BROTHERS"
+                     class="w-full h-full object-cover object-center"
+                     loading="eager">
+                {{-- Gradient fade left so image blends into dark bg --}}
+                <div class="absolute inset-y-0 left-0 w-48"
+                     style="background: linear-gradient(to right, #020617 0%, transparent 100%);"></div>
+            </div>
+        </div>
 
-                    <!-- Value Props Badges -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-800/80">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-center text-brand-red shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                                </svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-300">Catalogue Certifié</span>
-                        </div>
+        {{-- Mobile background image --}}
+        <div class="absolute inset-0 lg:hidden">
+            <img src="{{ asset('images/hero-kardian-optiques.webp') }}"
+                 alt="" class="w-full h-full object-cover object-right opacity-20" loading="eager">
+        </div>
 
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
-                                </svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-300">WhatsApp Direct</span>
-                        </div>
+        {{-- Content --}}
+        <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-14 lg:py-16">
+            <div class="max-w-xl">
 
-                        <div class="flex items-center space-x-2.5 col-span-2 sm:col-span-1">
-                            <div class="w-8 h-8 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-center text-amber-400 shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-300">Prix en {{ config('shop.currency_label', 'DH') }}</span>
-                        </div>
-                    </div>
+                {{-- Badge pill --}}
+                <div class="mb-5">
+                    <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-slate-500 bg-slate-800/80 text-slate-200 text-xs font-black uppercase tracking-widest">
+                        4K BROTHERS — VOTRE PARTENAIRE AUTO
+                    </span>
                 </div>
 
-                <!-- Right Column: Vehicle & Optics Photo (Enlarged to fill zone) -->
-                <div class="lg:col-span-6 xl:col-span-7 relative mt-8 lg:mt-0 w-full flex items-center justify-center">
-                    <div class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-800/80 bg-slate-950">
-                        <img src="{{ asset('images/hero-kardian-optiques.webp') }}" 
-                             alt="Voiture et optiques — 4K BROTHERS" 
-                             class="w-full h-auto object-cover object-center transform transition-transform duration-500 hover:scale-[1.02]"
-                             loading="eager">
-                    </div>
+                {{-- Heading --}}
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.12] tracking-tight mb-5">
+                    Importateur et distributeur<br>
+                    <span class="text-brand-red">de pièces automobiles,</span><br>
+                    carrosseries et accessoires.
+                </h1>
+
+                {{-- Description --}}
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-7 max-w-md">
+                    Optiques, pare-chocs, calandres, feux arrière pour <strong class="text-white">Dacia, Renault</strong> et toutes marques. Commandez instantanément sur WhatsApp.
+                </p>
+
+                {{-- CTA Button — style "pill with arrow" like reference --}}
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('catalog.marques') }}"
+                       class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-brand-red hover:bg-red-700 text-white font-black text-sm shadow-lg shadow-brand-red/40 transition-all hover:-translate-y-0.5">
+                        Parcourir le Catalogue &rarr;
+                    </a>
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}"
+                       target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-slate-600 hover:border-emerald-500 text-slate-200 hover:text-emerald-400 font-bold text-sm transition-all">
+                        <svg class="w-4 h-4 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
+                        </svg>
+                        Demande WhatsApp
+                    </a>
                 </div>
 
             </div>
+        </div>
+
+
+
+        {{-- Bottom wave curve (la "bulle" du bas) --}}
+        <div class="absolute bottom-0 left-0 right-0 z-20" style="height: 62px; margin-bottom: -2px;">
+            <svg viewBox="0 0 1440 60" preserveAspectRatio="none"
+                 class="w-full h-full"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,0 Q360,60 720,60 Q1080,60 1440,0 L1440,60 L0,60 Z" fill="#f8fafc"/>
+            </svg>
         </div>
     </section>
 

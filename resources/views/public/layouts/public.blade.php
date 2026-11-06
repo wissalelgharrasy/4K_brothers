@@ -179,6 +179,7 @@
     </header>
 
     <!-- Flash Messages -->
+    @if (session('success') || session('error') || session('info'))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
         @if (session('success'))
             <div class="p-4 mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 flex items-center justify-between" role="alert">
@@ -216,6 +217,7 @@
             </div>
         @endif
     </div>
+    @endif
 
     <!-- Main Content -->
     <main class="flex-grow pb-16">
@@ -236,65 +238,104 @@
         </a>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                
-                <!-- Brand Bio -->
-                <div class="md:col-span-2">
-                    <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-14 w-auto mb-4">
-                    <p class="text-sm text-slate-400 max-w-sm">
-                        Votre partenaire auto privilégié pour les pièces de carrosserie, pare-chocs, optiques, calandres et feux de signalisation Dacia, Renault et toutes marques.
-                    </p>
-                    <div class="mt-4 flex items-center space-x-2 text-xs text-slate-500">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Sans intermédiaire ni paiement en ligne : validation directe sur WhatsApp</span>
-                    </div>
-                </div>
+    <!-- Footer — Style Tiwizi: dark, centered logo, nav, social icons, contact, bottom bar -->
+    <footer class="bg-slate-950 text-slate-400 mt-auto">
 
-                <!-- Marques -->
-                <div>
-                    <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Marques & Modèles</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li>
-                            <a href="{{ route('catalog.marques') }}" class="font-bold text-brand-red hover:underline inline-flex items-center">
-                                Toutes les marques &rarr;
-                            </a>
-                        </li>
-                        <li><a href="{{ route('catalog.marque', 'dacia') }}" class="hover:text-brand-red transition-colors">Dacia (Duster, Sandero, Logan...)</a></li>
-                        <li><a href="{{ route('catalog.marque', 'renault') }}" class="hover:text-brand-red transition-colors">Renault (Clio, Express, Kangoo...)</a></li>
-                        <li><a href="{{ route('catalog.marque', 'peugeot') }}" class="hover:text-brand-red transition-colors">Peugeot</a></li>
-                        <li><a href="{{ route('catalog.marque', 'fiat') }}" class="hover:text-brand-red transition-colors">Fiat</a></li>
-                    </ul>
-                </div>
+        {{-- Main footer body --}}
+        <div class="max-w-5xl mx-auto px-6 py-14 flex flex-col items-center text-center">
 
-                <!-- Contact & WhatsApp -->
-                <div>
-                    <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Commande Rapide</h3>
-                    <p class="text-xs text-slate-400 mb-3">
-                        Composez votre panier et envoyez directement votre demande sur WhatsApp.
-                    </p>
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}" 
-                       target="_blank" 
-                       rel="noopener"
-                       class="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-colors shadow-lg shadow-emerald-900/30">
-                        <svg class="w-4 h-4 mr-2 fill-current" viewBox="0 0 24 24">
-                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
-                        </svg>
-                        Ouvrir WhatsApp
-                    </a>
-                    <div class="mt-4 text-xs text-slate-500">
-                        <a href="{{ route('login') }}" class="hover:text-slate-300 transition-colors">Espace Administrateur</a>
-                    </div>
-                </div>
+            {{-- Logo --}}
+            <a href="{{ route('home') }}" class="mb-8 inline-block">
+                <img src="{{ asset('images/logo.svg') }}" alt="4K BROTHERS" class="h-16 w-auto mx-auto">
+            </a>
 
+            {{-- Nav links --}}
+            <nav class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm font-semibold text-slate-300 mb-8">
+                <a href="{{ route('home') }}" class="hover:text-brand-red transition-colors">Accueil</a>
+                <a href="{{ route('catalog.marques') }}" class="hover:text-brand-red transition-colors">Catalogue</a>
+                <a href="{{ route('catalog.marque', 'dacia') }}" class="hover:text-brand-red transition-colors">Dacia</a>
+                <a href="{{ route('catalog.marque', 'renault') }}" class="hover:text-brand-red transition-colors">Renault</a>
+                <a href="{{ route('catalog.marque', 'peugeot') }}" class="hover:text-brand-red transition-colors">Peugeot</a>
+                <a href="{{ route('catalog.marque', 'fiat') }}" class="hover:text-brand-red transition-colors">Fiat</a>
+                <a href="{{ route('login') }}" class="hover:text-brand-red transition-colors">Admin</a>
+            </nav>
+
+            {{-- Social icons (square bordered) --}}
+            <div class="flex items-center gap-3 mb-10">
+                {{-- Facebook --}}
+                <a href="#" target="_blank" rel="noopener"
+                   class="w-11 h-11 flex items-center justify-center border border-slate-600 hover:border-brand-red text-slate-300 hover:text-brand-red transition-all">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                    </svg>
+                </a>
+                {{-- WhatsApp --}}
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}"
+                   target="_blank" rel="noopener"
+                   class="w-11 h-11 flex items-center justify-center border border-slate-600 hover:border-emerald-500 text-slate-300 hover:text-emerald-400 transition-all">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
+                    </svg>
+                </a>
+                {{-- Instagram --}}
+                <a href="#" target="_blank" rel="noopener"
+                   class="w-11 h-11 flex items-center justify-center border border-slate-600 hover:border-pink-500 text-slate-300 hover:text-pink-400 transition-all">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+                    </svg>
+                </a>
             </div>
 
-            <div class="mt-12 pt-6 border-t border-slate-800 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center">
-                <p>&copy; {{ date('Y') }} {{ config('shop.name', '4K BROTHERS') }}. Tous droits réservés.</p>
-                <p class="mt-2 sm:mt-0">Spécialiste de la pièce détachée automobile au Maroc.</p>
+            {{-- Contact info row --}}
+            <div class="flex flex-wrap justify-center gap-6 mb-8 text-sm text-slate-400">
+                {{-- Email --}}
+                <a href="mailto:4kb.parts@gmail.com"
+                   class="flex items-center gap-2 hover:text-brand-red transition-colors">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="2" y="4" width="20" height="16" rx="2" stroke-width="1.8"/>
+                        <path d="M2 7l10 7 10-7" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    4kb.parts@gmail.com
+                </a>
+                {{-- WhatsApp number --}}
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}"
+                   target="_blank" rel="noopener"
+                   class="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                    <svg class="w-5 h-5 fill-current text-emerald-500 shrink-0" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
+                    </svg>
+                    {{ config('shop.whatsapp_number', '+212 600 000 000') }}
+                </a>
+                {{-- Location --}}
+                <a href="https://www.google.com/maps?q=33.5926828,-7.5905401&z=17&hl=en"
+                   target="_blank" rel="noopener"
+                   class="flex items-center gap-2 hover:text-brand-red transition-colors">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Casablanca, Maroc
+                </a>
             </div>
+
+            {{-- Divider --}}
+            <div class="w-full border-t border-slate-800 mb-6"></div>
+
+            {{-- Bottom bar --}}
+            <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('login') }}" class="hover:text-slate-300 transition-colors">Espace Admin</a>
+                    <span class="text-slate-700">|</span>
+                    <span>Catalogue en ligne</span>
+                </div>
+                <p class="text-center">
+                    &copy; 2022 – {{ date('Y') }} {{ config('shop.name', '4K BROTHERS') }}. Tous Droits Réservés.
+                </p>
+                <p>Importateur &amp; Distributeur au Maroc</p>
+            </div>
+
         </div>
     </footer>
 
