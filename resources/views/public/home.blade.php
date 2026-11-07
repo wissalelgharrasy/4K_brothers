@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- Hero Banner — Full bleed, photo background right, curved bottom -->
-    <section class="relative bg-slate-950 text-white" style="padding-bottom: 60px;">
+    <section class="relative bg-slate-950 text-white" style="padding-bottom: 50px;">
 
         {{-- Full bleed layout: image on right bleeds into dark bg --}}
         <div class="absolute inset-0 flex">
@@ -29,7 +29,7 @@
         </div>
 
         {{-- Content --}}
-        <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-14 lg:py-16">
+        <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-24">
             <div class="max-w-xl">
 
                 {{-- Badge pill --}}
@@ -40,26 +40,26 @@
                 </div>
 
                 {{-- Heading --}}
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.12] tracking-tight mb-5">
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black leading-[1.12] tracking-tight mb-4">
                     Importateur et distributeur<br>
                     <span class="text-brand-red">de pièces automobiles,</span><br>
                     carrosseries et accessoires.
                 </h1>
 
                 {{-- Description --}}
-                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-7 max-w-md">
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-5 max-w-md">
                     Optiques, pare-chocs, calandres, feux arrière pour <strong class="text-white">Dacia, Renault</strong> et toutes marques. Commandez instantanément sur WhatsApp.
                 </p>
 
                 {{-- CTA Button — style "pill with arrow" like reference --}}
                 <div class="flex flex-wrap gap-3">
                     <a href="{{ route('catalog.marques') }}"
-                       class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-brand-red hover:bg-red-700 text-white font-black text-sm shadow-lg shadow-brand-red/40 transition-all hover:-translate-y-0.5">
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-red hover:bg-red-700 text-white font-black text-xs shadow-lg shadow-brand-red/40 transition-all hover:-translate-y-0.5">
                         Parcourir le Catalogue &rarr;
                     </a>
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}"
                        target="_blank" rel="noopener"
-                       class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-slate-600 hover:border-emerald-500 text-slate-200 hover:text-emerald-400 font-bold text-sm transition-all">
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-600 hover:border-emerald-500 text-slate-200 hover:text-emerald-400 font-bold text-xs transition-all">
                         <svg class="w-4 h-4 fill-current text-emerald-400 shrink-0" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
                         </svg>
@@ -83,11 +83,11 @@
     </section>
 
     <!-- Brands Selection Section -->
-    <section id="marques" class="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="marques" class="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
             <div>
                 <span class="text-xs font-extrabold uppercase tracking-wider text-brand-red">Parcourir par Constructeur</span>
-                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Choisissez une Marque</h2>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Choisissez une Marque</h2>
                 <p class="text-sm text-slate-500 mt-1">Sélectionnez le constructeur de votre véhicule pour voir les modèles</p>
             </div>
             <div class="mt-4 sm:mt-0">
@@ -106,7 +106,7 @@
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-slate-50 group-hover:bg-brand-red/10 rounded-full transition-colors"></div>
 
                     <!-- Brand Icon / Logo -->
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-100 group-hover:bg-brand-red/5 border border-slate-200 flex items-center justify-center mb-4 transition-transform group-hover:scale-105 p-2 overflow-hidden">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-100 group-hover:bg-brand-red/5 border border-slate-200 flex items-center justify-center mb-3 transition-transform group-hover:scale-105 p-2 overflow-hidden">
                         @if ($marque->logo_url)
                             <img src="{{ $marque->logo_url }}" alt="{{ $marque->nom }}" class="w-full h-full object-contain">
                         @else
@@ -116,7 +116,7 @@
                         @endif
                     </div>
 
-                    <h3 class="text-lg font-black text-slate-900 group-hover:text-brand-red transition-colors">
+                    <h3 class="text-sm font-black text-slate-900 group-hover:text-brand-red transition-colors">
                         {{ $marque->nom }}
                     </h3>
 
@@ -163,11 +163,11 @@
 
     <!-- Featured Pieces Showcase -->
     @if ($featuredPieces->isNotEmpty())
-        <section class="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
                 <div>
                     <span class="text-xs font-extrabold uppercase tracking-wider text-brand-red">Nouveautés & Références Clés</span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Derniers Articles en Ligne</h2>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Derniers Articles en Ligne</h2>
                 </div>
                 <a href="{{ route('catalog.marque', 'dacia') }}" class="text-sm font-bold text-brand-red hover:underline mt-2 sm:mt-0 flex items-center">
                     Parcourir tout le catalogue

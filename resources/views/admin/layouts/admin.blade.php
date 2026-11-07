@@ -171,13 +171,7 @@
                 </h1>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <span class="inline-flex items-center text-xs text-slate-500 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
-                    En ligne
-                </span>
-                <span class="text-xs text-slate-400 font-semibold">4K BROTHERS v1.0</span>
-            </div>
+
         </header>
 
         <!-- Flash Messages -->
@@ -212,6 +206,79 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Delete Confirmation Modal (global) -->
+    <div id="delete-confirm-modal" class="fixed inset-0 z-[999] hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+            <!-- Header -->
+            <div class="p-5 flex items-start gap-4">
+                <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-rose-100 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-black text-slate-900">Confirmer la suppression</h3>
+                    <p id="delete-confirm-message" class="text-xs text-slate-500 mt-1 leading-relaxed"></p>
+                </div>
+            </div>
+            <!-- Warning -->
+            <div class="mx-5 mb-4 px-3 py-2.5 rounded-xl bg-rose-50 border border-rose-100 flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 text-rose-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z"/>
+                </svg>
+                <span class="text-[11px] font-bold text-rose-700">Cette action est irréversible.</span>
+            </div>
+            <!-- Actions -->
+            <div class="px-5 pb-5 flex items-center justify-end gap-2">
+                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition-colors cursor-pointer">
+                    Annuler
+                </button>
+                <button type="button" id="delete-confirm-btn" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md shadow-rose-600/20 transition-all cursor-pointer flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let _deleteFormToSubmit = null;
+
+        function confirmDelete(form, message) {
+            _deleteFormToSubmit = form;
+            document.getElementById('delete-confirm-message').textContent = message;
+            const modal = document.getElementById('delete-confirm-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            _deleteFormToSubmit = null;
+            const modal = document.getElementById('delete-confirm-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('delete-confirm-btn').addEventListener('click', function () {
+            if (_deleteFormToSubmit) {
+                _deleteFormToSubmit.submit();
+            }
+            closeDeleteModal();
+        });
+
+        // Fermer en cliquant sur le fond
+        document.getElementById('delete-confirm-modal').addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // Fermer avec Echap
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeDeleteModal();
+        });
+    </script>
 
     @stack('scripts')
 </body>

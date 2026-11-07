@@ -29,24 +29,6 @@
             <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
                 Sélectionnez votre constructeur automobile pour parcourir l’ensemble des modèles disponibles, comparer les optiques, pare-chocs, calandres et commander directement sur WhatsApp.
             </p>
-
-            <!-- Key Stats -->
-            <div class="mt-6 pt-6 border-t border-slate-800/80 flex flex-wrap gap-4 sm:gap-8">
-                <div>
-                    <div class="text-2xl sm:text-3xl font-black text-white">{{ $stats['total_marques'] }}</div>
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Marques actives</div>
-                </div>
-                <div class="w-px h-10 bg-slate-800 hidden sm:block"></div>
-                <div>
-                    <div class="text-2xl sm:text-3xl font-black text-brand-red">{{ $stats['total_vehicules'] }}</div>
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Modèles référencés</div>
-                </div>
-                <div class="w-px h-10 bg-slate-800 hidden sm:block"></div>
-                <div>
-                    <div class="text-2xl sm:text-3xl font-black text-emerald-400">{{ $stats['total_pieces'] }}</div>
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pièces certifiées</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -158,28 +140,6 @@
         <button type="button" onclick="document.getElementById('marque-filter-input').value = ''; filterMarques();" class="mt-2 text-xs font-bold text-brand-red hover:underline cursor-pointer">
             Réinitialiser le filtre
         </button>
-    </div>
-
-    <!-- Assistance Box -->
-    <div class="mt-12 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.554 1.71.851 2.781.851 3.18 0 5.766-2.587 5.767-5.766.001-3.182-2.585-5.768-5.767-5.768zm3.349 8.167c-.145.409-.844.757-1.157.777-.306.019-.699.034-2.021-.513-1.688-.698-2.771-2.416-2.856-2.528-.084-.112-.676-.9-.676-1.716 0-.817.429-1.218.582-1.385.153-.166.333-.208.444-.208.111 0 .222.002.319.006.102.005.239-.039.373.284.145.351.498 1.216.542 1.305.044.089.073.193.014.31-.059.117-.089.19-.176.293-.087.103-.183.23-.262.309-.089.088-.182.184-.078.362.104.178.463.764 1.002 1.243.693.616 1.278.808 1.456.897.178.089.282.074.386-.045.105-.118.445-.518.563-.696.119-.178.238-.148.4-.089.163.059 1.036.488 1.214.577.178.089.297.133.341.208.044.074.044.43-.101.839z"/>
-                </svg>
-            </div>
-            <div>
-                <h4 class="text-base font-black text-slate-900">Votre marque ou modèle ne figure pas dans la liste ?</h4>
-                <p class="text-xs text-slate-500 mt-0.5">Notre équipe commerciale peut vous trouver la référence exacte sous 24-48h.</p>
-            </div>
-        </div>
-
-        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', config('shop.whatsapp_number', '212600000000')) }}?text={{ rawurlencode('Bonjour 4K BROTHERS, je recherche des pièces pour une marque non listée.') }}" 
-           target="_blank" 
-           rel="noopener"
-           class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center">
-            Demande spécifique sur WhatsApp &rarr;
-        </a>
     </div>
 
 </div>

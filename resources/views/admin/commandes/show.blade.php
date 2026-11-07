@@ -148,11 +148,12 @@
 
     <!-- Supprimer -->
     <div class="flex justify-end">
-        <form method="POST" action="{{ route('admin.commandes.destroy', $commande) }}"
-              onsubmit="return confirm('Supprimer cette commande ?')">
+        <form method="POST" action="{{ route('admin.commandes.destroy', $commande) }}" id="form-delete-commande-{{ $commande->id }}">
             @csrf
             @method('DELETE')
-            <button type="submit" class="text-xs font-bold text-slate-400 hover:text-brand-red transition-colors">
+            <button type="button"
+                    onclick="confirmDelete(document.getElementById('form-delete-commande-{{ $commande->id }}'), 'Êtes-vous sûr de vouloir supprimer la commande #{{ $commande->id }} ?')"
+                    class="text-xs font-bold text-slate-400 hover:text-brand-red transition-colors">
                 Supprimer la commande
             </button>
         </form>

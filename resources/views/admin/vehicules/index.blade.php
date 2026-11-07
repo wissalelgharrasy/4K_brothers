@@ -68,10 +68,12 @@
                                 Modifier
                             </a>
 
-                            <form action="{{ route('admin.vehicules.destroy', $vehicule) }}" method="POST" class="inline-block" onsubmit="return confirm('Confirmer la suppression du modèle {{ $vehicule->nom }} ?');">
+                            <form action="{{ route('admin.vehicules.destroy', $vehicule) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-xs font-bold text-rose-600 hover:text-rose-800">
+                                <button type="button"
+                                        onclick="confirmDelete(this.closest('form'), 'Êtes-vous sûr de vouloir supprimer le modèle «\u00a0{{ $vehicule->nom }}\u00a0» ?')"
+                                        class="text-xs font-bold text-rose-600 hover:text-rose-800">
                                     Supprimer
                                 </button>
                             </form>

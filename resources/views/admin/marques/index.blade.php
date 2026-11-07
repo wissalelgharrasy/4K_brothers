@@ -67,10 +67,12 @@
                                 Modifier
                             </a>
 
-                            <form action="{{ route('admin.marques.destroy', $marque) }}" method="POST" class="inline-block" onsubmit="return confirm('Confirmer la suppression de la marque {{ $marque->nom }} ?');">
+                            <form action="{{ route('admin.marques.destroy', $marque) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-xs font-bold text-rose-600 hover:text-rose-800">
+                                <button type="button"
+                                        onclick="confirmDelete(this.closest('form'), 'Êtes-vous sûr de vouloir supprimer la marque «\u00a0{{ $marque->nom }}\u00a0» ?')"
+                                        class="text-xs font-bold text-rose-600 hover:text-rose-800">
                                     Supprimer
                                 </button>
                             </form>
